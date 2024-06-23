@@ -20,7 +20,7 @@ def producto(request, id):
     return render(request,'aplicacion/producto.html', datos)
 
 def administrador(request):
-    zapatillas = Zapatilla.objects.order_by('-modelo')
+    zapatillas = Zapatilla.objects.order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
@@ -59,7 +59,7 @@ def anadir(request):
 
 def marca(request, id):
     marca = get_object_or_404(Marca, id=id)
-    zapatillas = Zapatilla.objects.filter(marca=marca).order_by('-nombre')
+    zapatillas = Zapatilla.objects.filter(marca=marca).order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
@@ -70,13 +70,14 @@ def marca(request, id):
 
     datos = {'entity': zapatillas, 
              'filtro': marca.nombre,
-             'paginator': paginator
+             'paginator': paginator,
+             'marca': marca
              }
     return render(request, 'aplicacion/marca.html', datos)
 
 def categoria(request,id):
     categoria = get_object_or_404(Categoria, id=id)
-    zapatillas = Zapatilla.objects.filter(categoria=categoria).order_by('-nombre')
+    zapatillas = Zapatilla.objects.filter(categoria=categoria).order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
@@ -87,8 +88,10 @@ def categoria(request,id):
     
     datos = {'entity': zapatillas, 
              'filtro': categoria.nombre,
-             'paginator': paginator
+             'paginator': paginator,
+             'categoria' : categoria
              }
+    
     return render(request,'aplicacion/categoria.html', datos)
 
 def direcciones(request):

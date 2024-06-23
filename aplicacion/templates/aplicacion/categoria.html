@@ -8,9 +8,9 @@
 {% block content %}
 
 <section>
-<div class="container">
-        <div class="title-section d-flex justify-content-between">
-            <h2>Categoría</h2>
+<div class="container mx-auto">
+        <div class="title-section d-flex justify-content-between mb-4">
+            <h2> {{ categoria.nombre }} </h2>
             <div class="order-by">
                 <div class="btn-group">
                     <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -26,9 +26,7 @@
             </div>
         </div>
         
-        
-        
-        <div class="row">
+        {% comment %} <div class="row">
             <div class="filtros col-12 col-md-2">
                 <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
                     <div class="accordion-item">
@@ -85,9 +83,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> {% endcomment %}
             
-            <div class="product-container col-12 col-md-10">
+            <div class="product-container col-12 col-md-10 mx-auto justify-content-center">
                 {% if entity %}
                     {% for zapatilla in entity %}
                             <a href="{% url 'producto' zapatilla.id %}">
