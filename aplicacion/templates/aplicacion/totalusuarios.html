@@ -6,42 +6,46 @@
     <!-- Lista de todos los usuarios -->
     <section>
         <div class="container">
-            <h2>Listado de Perfiles de Usuarios</h2>
-            <div class="row mt-3">
-                <!-- Perfil -->
-                {% if entity %}
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>RUT</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Correo</th>
-                        <th>Fecha de Nacimiento</th>
-                        <th>Teléfono</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for usuario in entity %}
-                        <tr>
-                            <td>{{ usuario.rut }}</td>
-                            <td>{{ usuario.nombre }}</td>
-                            <td>{{ usuario.apellido }}</td>
-                            <td>{{ usuario.correo }}</td>
-                            <td>{{ usuario.fnac|date:"d/m/Y" }}</td>
-                            <td>{{ usuario.telefono }}</td>
-                            <td> 
-                                <button class="btn btn-dark" >Detalles</button>
-                                <button class="btn btn-danger">Eliminar</button> 
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay usuarios que mostrar.</p>
-        {% endif %}
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>RUT</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>Correo</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Teléfono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if entity %}
+                                    {% for usuario in entity %}
+                                        <tr>
+                                            <td>{{ usuario.rut }}</td>
+                                            <td>{{ usuario.nombre }}</td>
+                                            <td>{{ usuario.apellido }}</td>
+                                            <td>{{ usuario.correo }}</td>
+                                            <td>{{ usuario.fnac|date:"d/m/Y" }}</td>
+                                            <td>{{ usuario.telefono }}</td>
+                                            <td> 
+                                                <button class="btn btn-primary" >Detalles</button>
+                                                <button class="btn btn-danger">Eliminar</button> 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center">No hay usuarios para mostrar</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

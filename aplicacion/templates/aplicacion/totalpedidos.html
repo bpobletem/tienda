@@ -3,56 +3,56 @@
 
 {% block content %}
 
-
-
-
-
     <!-- Pedidos -->
     <section>
         <div class="container">
-            <h2>Listado de Pedidos</h2>
-            <div class="row mt-3">
-                {% if entity %}
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Dirección</th>
-                                <th>Zapatillas</th>
-                                <th>Estado</th>
-                                <th>Total</th>
-                                <th>Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for pedido in entity %}
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td>{{ pedido.fecha }}</td>
-                                    <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
-                                    <td>{{ pedido.direccion }}</td>
-                                    <td>
-                                        {% for zapatilla in pedido.zapatillas.all %}
-                                            {{ zapatilla.nombre }}{% if not forloop.last %}, {% endif %}
-                                        {% endfor %}
-                                    </td>
-                                    <td>{{ pedido.get_estado_display }}</td>
-                                    <td>{{ pedido.total }}</td>
-                                    <td> 
-                                        <button class="btn btn-dark" >Detalles</button>
-                                        <button class="btn btn-danger">Eliminar</button> 
-                                    </td>
+                                    <th>Fecha</th>
+                                    <th>Cliente</th>
+                                    <th>Dirección</th>
+                                    <th>Zapatillas</th>
+                                    <th>Estado</th>
+                                    <th>Total</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p>No hay pedidos que mostrar.</p>
-                {% endif %}
+                            </thead>
+                            <tbody>
+                                {% if entity %}
+                                    {% for usuario in entity %}
+                                        <tr>
+                                            <td>{{ pedido.fecha }}</td>
+                                            <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+                                            <td>{{ pedido.direccion }}</td>
+                                            <td>
+                                                {% for zapatilla in pedido.zapatillas.all %}
+                                                    {{ zapatilla.nombre }}{% if not forloop.last %}, {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td>{{ pedido.get_estado_display }}</td>
+                                            <td>{{ pedido.total }}</td>
+                                            <td> 
+                                                <button class="btn btn-dark" >Detalles</button>
+                                                <button class="btn btn-danger">Eliminar</button> 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center">No hay pedidos para mostrar</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
-
     <div>
         {% include "aplicacion/paginator.html" %}
     </div>

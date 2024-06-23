@@ -18,35 +18,46 @@
     <!-- PRODUCTOS -->
     <section>
         <div class="container">
-            <div class="row" id="product-list">
-                <!-- Tarjetas de productos -->
-                {% comment %} Se ocupa entity porque el paginador necesita que se llame asi {% endcomment %}
-                {% if entity %}
-                {% for zapatilla in entity %}
-                    <div class="col-md-3 mb-4">
-                        <div class="card">
-                            <img src="{{ zapatilla.foto.url }}" class="card-img-top"
-                                alt="{{zapatilla.modelo}}">
-                            <div class="card-body text-center">
-                                <h5 class="card-title">{{zapatilla.modelo}}</h5>
-                                <p class="card-text marca">{{zapatilla.marca}}</p>
-                                <p class="card-text precio">${{zapatilla.precio}}</p>
-                                <button href="editar.html" class="btn btn-primary mb-2 mt-2">
-                                    <i class="fa-solid fa-pen"></i> Editar
-                                </button>
-                                <button type="button" class="btn btn-danger" onclick="borrarProducto(this)">
-                                    <i class="fa-solid fa-trash"></i> Eliminar
-                                </button>
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Modelo</th>
+                                    <th>Marca</th>
+                                    <th>Precio</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if entity %}
+                                    {% for zapatilla in entity %}
+                                        <tr>
+                                            <td><img src="{{ zapatilla.foto.url }}" alt="{{ zapatilla.modelo }}" style="max-width: 100px;"></td>
+                                            <td>{{ zapatilla.modelo }}</td>
+                                            <td>{{ zapatilla.marca }}</td>
+                                            <td>${{ zapatilla.precio }}</td>
+                                            <td> 
+                                                <button class="btn btn-primary" >Detalles</button>
+                                                <button class="btn btn-danger">Eliminar</button> 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No hay productos para mostrar</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
                     </div>
-                {% endfor %}
-                {% else %}
-                    <p>No hay productos para mostrar</p>
-                {% endif %}
+                </div>
             </div>
         </div>
     </section>
+    
 
     <div>
         {% include "aplicacion/paginator.html" %}
