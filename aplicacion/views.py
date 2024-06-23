@@ -97,11 +97,25 @@ def categoria(request,id):
 def direcciones(request):
     return render(request,'aplicacion/direcciones.html')
 
-def editar(request):
+def editar(request): #editarproducto
     return render(request,'aplicacion/editar.html')
 
-def editarusuarios(request):
-    return render(request,'aplicacion/editarusuarios.html')
+def editarusuarios(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    
+    if request.method == "POST":
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('aplicacion/usuarios.html')  # Asumiendo que tienes una vista para listar usuarios
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    datos = {
+        'form': form, 'usuario': usuario
+    }
+    
+    return render(request, 'aplicacion/editarusuarios.html', datos)
 
 # def login(request):
 #     return render(request,'aplicacion/registration/login.html')

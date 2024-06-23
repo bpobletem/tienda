@@ -32,7 +32,7 @@
                                             <td>{{ usuario.fnac|date:"d/m/Y" }}</td>
                                             <td>{{ usuario.telefono }}</td>
                                             <td> 
-                                                <button class="btn btn-primary" >Detalles</button>
+                                                <a class="btn btn-primary" href="{% url 'usuarios' usuario.rut %}">Detalles</a>
                                                 <button class="btn btn-danger">Eliminar</button> 
                                             </td>
                                         </tr>

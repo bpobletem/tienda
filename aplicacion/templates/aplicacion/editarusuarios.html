@@ -2,60 +2,60 @@
 {% load static %}
 
 {% block content %}
-
-    <section>
-        <div class="container">
-            <h1>Editar Usuario</h1>
-            <div class="row mt-4">
-                <!-- Formulario de edición de usuario -->
-                <div class="col-12 col-md-8">
-                    <form id="formulario_editar" class="formulario" action="totalusuarios.html" method="POST">
-                        <div class="mb-3">
-                            <label for="rut" class="form-label">RUT</label>
-                            <input type="text" class="form-control" id="rut" value="12.345.678-9" disabled>
-                        </div>
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" value="Juan">
-                            <div id="errorNombre" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellidos" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidos" value="Pérez">
-                            <div id="errorApellidos" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="direccion" class="form-label">Dirección</label>
-                            <input type="text" class="form-control" id="direccion" value="Calle 123">
-                            <div id="errorDireccion" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="telefono" value="+1234567890">
-                            <div id="errorTelefono" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" value="juanperez@example.com">
-                            <div id="errorEmail" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" id="fechaNacimiento" value="1990-01-01">
-                            <div id="errorFechaNacimiento" class="text-danger"></div>
-                        </div>
-                        <!-- Botón Listo -->
-                        <div class="mb-3">
-                            <button type="submit" class="btn btn-dark">Listo</button>
-                        </div>
-                        <!-- Botón Listo -->
-                    </form>
-                </div>
-                <!-- Fin Formulario de edición de usuario -->
+<section>
+    <div class="container">
+        <h1>Editar Usuario</h1>
+        <div class="row mt-4">
+            <!-- Formulario de edición de usuario -->
+            <div class="col-12 col-md-8">
+                <form id="formulario_editar" class="formulario" action="{% url 'editarusuarios' usuario.rut %}" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="rut" class="form-label">RUT</label>
+                        <input type="text" class="form-control" id="rut" name="rut" value="{{ usuario.rut }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ usuario.nombre }}">
+                        <div id="errorNombre" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="apellidos" name="apellido" value="{{ usuario.apellido }}">
+                        <div id="errorApellidos" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ usuario.direccion }}">
+                        <div id="errorDireccion" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ usuario.telefono }}">
+                        <div id="errorTelefono" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="correo" value="{{ usuario.correo }}">
+                        <div id="errorEmail" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="fechaNacimiento" name="fnac" value="{{ usuario.fnac }}">
+                        <div id="errorFechaNacimiento" class="text-danger"></div>
+                    </div>
+                    <!-- Botón Listo -->
+                    <div class="mb-3">
+                        <a class="btn btn-danger" href="{% url 'usuarios' usuario.rut %}">Cancelar</a>
+                        <a type="submit" class="btn btn-primary">Guardar</a>
+                    </div>
+                    <!-- Botón Listo -->
+                </form>
             </div>
+            <!-- Fin Formulario de edición de usuario -->
         </div>
-    </section>  
-    <script src="./assets/js/validarusuarios.js"></script>
-    <script src="./assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+    </div>
+</section>
+    <script src="{% static "aplicacion/js/validarusuarios.js" %}"></script>
 
     {% endblock content %}
