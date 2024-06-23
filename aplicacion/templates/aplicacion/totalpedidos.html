@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-
     <!-- Pedidos -->
     <section>
         <div class="container">
@@ -23,20 +22,20 @@
                             </thead>
                             <tbody>
                                 {% if entity %}
-                                    {% for usuario in entity %}
+                                    {% for pedido in entity %}
                                         <tr>
-                                            <td>{{ pedido.fecha }}</td>
+                                            <td>{{ pedido.fecha|date:"d/m/Y H:i" }}</td>
                                             <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
                                             <td>{{ pedido.direccion }}</td>
                                             <td>
-                                                {% for zapatilla in pedido.zapatillas.all %}
-                                                    {{ zapatilla.nombre }}{% if not forloop.last %}, {% endif %}
+                                                {% for pz in pedido.pedidozapatilla_set.all %}
+                                                    {{ pz.zapatilla.marca }} - {{ pz.zapatilla.modelo }} ({{ pz.cantidad }}){% if not forloop.last %}, {% endif %}
                                                 {% endfor %}
                                             </td>
                                             <td>{{ pedido.get_estado_display }}</td>
                                             <td>{{ pedido.total }}</td>
                                             <td> 
-                                                <button class="btn btn-dark" >Detalles</button>
+                                                <a href="" class="btn btn-dark">Detalles</a>
                                                 <button class="btn btn-danger">Eliminar</button> 
                                             </td>
                                         </tr>
@@ -56,5 +55,4 @@
     <div>
         {% include "aplicacion/paginator.html" %}
     </div>
-
 {% endblock content %}
