@@ -108,7 +108,7 @@ def categoria(request,id):
 def direcciones(request):
     return render(request,'aplicacion/direcciones.html')
 
-def editar(request): #editarproducto
+def editar(request,id): #editarproducto
     return render(request,'aplicacion/editar.html')
 
 def editarusuarios(request, rut):

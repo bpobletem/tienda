@@ -20,8 +20,11 @@
     <div class="extra-nav">
         <div class="container d-flex justify-content-end">
             <a href="{% url "pedidos" %}" class="me-3">Seguimiento de pedidos</a>
+            {% if user.is_authenticated %}
+            {% else %}
             <span class="me-3">/</span>
             <a href="{% url "registro" %}">Registrate</a>
+            {% endif %}
         </div>
     </div>
 
