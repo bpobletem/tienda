@@ -40,8 +40,8 @@
                                             <td>{{ zapatilla.marca }}</td>
                                             <td>${{ zapatilla.precio }}</td>
                                             <td> 
-                                                <button class="btn btn-primary" >Detalles</button>
-                                                <button class="btn btn-danger">Eliminar</button> 
+                                                <a class="btn btn-primary" href="{% url "detalleproducto" zapatilla.id %}" >Detalles</a>
+                                                <a class="btn btn-danger">Eliminar</a> 
                                             </td>
                                         </tr>
                                     {% endfor %}

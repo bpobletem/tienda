@@ -1,0 +1,42 @@
+{% extends "aplicacion/baseAdmin.html" %}
+{% load static %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <h1>Detalles zapatilla</h1>
+        <div class="row mt-4">
+            <div class="col-12 col-md-6">
+                <div class="card">
+                    <img src="{{ zapatilla.foto.url }}" class="card-img-top" alt="{{ zapatilla.modelo }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ zapatilla.marca }} - {{ zapatilla.modelo }}</h5>
+                        <p class="card-text">{{ zapatilla.descripcion }}</p>
+                        <p class="card-text"><strong>Precio:</strong> ${{ zapatilla.precio }}</p>
+                        <p class="card-text"><strong>Categoría:</strong> {{ zapatilla.categoria.all|join:", " }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 table-responsive">
+                <h2>Stock Disponible</h2>
+                {% if tallas_disponibles %}
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Talla</th>
+                            <th>Stock</th>
+                        </tr>
+                        {% for talla in tallas_disponibles %}
+                            <tr>
+                                <td>{{talla.talla}}</td>
+                                <td>{{talla.cantidad}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <li class="list-group-item">No hay stock disponible para esta zapatilla.</li>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -34,6 +34,17 @@ def administrador(request):
     
     return render(request,'aplicacion/admin.html',datos)
 
+def detalleproducto(request, id):
+    zapatilla = get_object_or_404(Zapatilla, id=id)
+    tallas_disponibles = StockZapatilla.objects.filter(zapatilla=zapatilla)
+    datos = {
+        'zapatilla': zapatilla,
+        'tallas_disponibles': tallas_disponibles,
+    }
+
+    return render(request, 'aplicacion/detalleproducto.html', datos)
+
+
 def adminpedido(request):
     return render(request,'aplicacion/adminpedido.html')
 

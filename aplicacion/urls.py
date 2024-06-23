@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import index, producto,administrador, loginAdmin, adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca
+from .views import index, producto,administrador, detalleproducto, loginAdmin, adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -7,6 +7,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('producto/<int:id>/', producto, name='producto'),
     path('administrador/', administrador, name='admin'),
+    path('detalleproducto/<int:id>', detalleproducto, name='detalleproducto'),
     path('adminpedido/', adminpedido, name='adminpedido'),
     path('anadir/', anadir, name='anadir'),
     path('categoria/<int:id>/', categoria, name='categoria'),
