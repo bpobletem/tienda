@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import index, producto,administrador,adminpedido,anadir,categoria,direcciones,editar,editarusuarios,loginAdmin,pedidos,perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca
+from .views import index, producto,administrador, loginAdmin, adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca
 from django.conf.urls.static import static
 from django.conf import settings
 

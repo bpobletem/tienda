@@ -20,7 +20,7 @@ def producto(request, id):
     return render(request,'aplicacion/producto.html', datos)
 
 def administrador(request):
-    zapatillas = Zapatilla.objects.all()
+    zapatillas = Zapatilla.objects.order_by('-modelo')
     page = request.GET.get('page', 1)
 
     try:
@@ -59,7 +59,7 @@ def anadir(request):
 
 def marca(request, id):
     marca = get_object_or_404(Marca, id=id)
-    zapatillas = Zapatilla.objects.filter(marca=marca)
+    zapatillas = Zapatilla.objects.filter(marca=marca).order_by('-nombre')
     page = request.GET.get('page', 1)
 
     try:
@@ -76,7 +76,7 @@ def marca(request, id):
 
 def categoria(request,id):
     categoria = get_object_or_404(Categoria, id=id)
-    zapatillas = Zapatilla.objects.filter(categoria=categoria)
+    zapatillas = Zapatilla.objects.filter(categoria=categoria).order_by('-nombre')
     page = request.GET.get('page', 1)
 
     try:
@@ -104,7 +104,7 @@ def editarusuarios(request):
 #     return render(request,'aplicacion/registration/login.html')
 
 def loginAdmin(request):
-    return render(request,'aplicacion/loginAdmin.html')
+     return render(request,'aplicacion/loginAdmin.html')
 
 def pedidos(request):
     return render(request,'aplicacion/pedidos.html')
@@ -123,7 +123,7 @@ def registro(request):
             usuario = usuario_form.save()
             direccion = direccion_form.save()
             usuario.direcciones.add(direccion)
-            return redirect('index') #Hay que redirigir a una pagina de exito de registro.
+            return redirect('index')
     else:
         usuario_form = UsuarioForm()
         direccion_form = DireccionForm()
@@ -134,7 +134,7 @@ def registro(request):
     })
 
 def totalpedidos(request):
-    pedidos = Pedido.objects.all()
+    pedidos = Pedido.objects.order_by('-fecha')
     page = request.GET.get('page', 1)
 
     try:
@@ -149,7 +149,7 @@ def totalpedidos(request):
     return render(request,'aplicacion/totalpedidos.html', datos)
 
 def totalusuarios(request):
-    usuarios = Usuario.objects.all()
+    usuarios = Usuario.objects.order_by('-rut')
     page = request.GET.get('page',1)
 
     try:
