@@ -3,6 +3,8 @@ from .models import Zapatilla, Categoria, Marca, StockZapatilla, Usuario, Pedido
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm
+from django.core.paginator import Paginator
+from django.http import Http404
 
 # Create your views here.
 def index(request):
@@ -19,7 +21,17 @@ def producto(request, id):
 
 def administrador(request):
     zapatillas = Zapatilla.objects.all()
-    datos = {'zapatillas': zapatillas}
+    page = request.GET.get('page', 1)
+
+    try:
+        paginator = Paginator(zapatillas,5) #Muestra 5 productos por pagina
+        zapatillas = paginator.page(page)
+    except:
+        raise Http404
+    
+    datos = {'entity': zapatillas, #ENTITY ES NECESARIO PARA EL PAGINADOR
+            'paginator': paginator}
+    
     return render(request,'aplicacion/admin.html',datos)
 
 def adminpedido(request):
@@ -101,13 +113,33 @@ def registro(request):
 
 def totalpedidos(request):
     pedidos = Pedido.objects.all()
-    datos = {'pedidos' : pedidos}
+    page = request.GET.get('page', 1)
+
+    try:
+        paginator = Paginator(pedidos,5)
+        pedidos = paginator.page(page)
+    except:
+        raise Http404
+    
+    datos = {'entity' : pedidos, #ENTITY ES NECESARIO PARA EL PAGINADOR
+            'paginator': paginator}
+    
     return render(request,'aplicacion/totalpedidos.html', datos)
 
 def totalusuarios(request):
     usuarios = Usuario.objects.all()
-    datos = {'usuarios': usuarios}
-    return render(request,'aplicacion/totalusuarios.html',datos)
+    page = request.GET.get('page',1)
+
+    try:
+        paginator = Paginator(usuarios,5)
+        usuarios = paginator.page(page)
+    except:
+        raise Http404
+    
+    datos = {'entity': usuarios, #ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request,'aplicacion/totalusuarios.html', datos)
 
 def usuarios(request):
     return render(request,'aplicacion/usuarios.html')

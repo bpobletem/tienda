@@ -20,8 +20,9 @@
         <div class="container">
             <div class="row" id="product-list">
                 <!-- Tarjetas de productos -->
-                {% if zapatillas %}
-                {% for zapatilla in zapatillas %}
+                {% comment %} Se ocupa entity porque el paginador necesita que se llame asi {% endcomment %}
+                {% if entity %}
+                {% for zapatilla in entity %}
                     <div class="col-md-3 mb-4">
                         <div class="card">
                             <img src="{{ zapatilla.foto.url }}" class="card-img-top"
@@ -46,6 +47,10 @@
             </div>
         </div>
     </section>
+
+    <div>
+        {% include "aplicacion/paginator.html" %}
+    </div>
     <!-- Fin PRODUCTOS -->
     <script>
         function borrarProducto(button) {

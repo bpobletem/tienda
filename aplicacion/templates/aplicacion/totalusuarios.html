@@ -9,7 +9,7 @@
             <h2>Listado de Perfiles de Usuarios</h2>
             <div class="row mt-3">
                 <!-- Perfil -->
-                {% if usuarios %}
+                {% if entity %}
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -19,12 +19,11 @@
                         <th>Correo</th>
                         <th>Fecha de Nacimiento</th>
                         <th>Teléfono</th>
-                        <th>Detalle</th>
-                        <th>Eliminar</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for usuario in usuarios %}
+                    {% for usuario in entity %}
                         <tr>
                             <td>{{ usuario.rut }}</td>
                             <td>{{ usuario.nombre }}</td>
@@ -32,8 +31,10 @@
                             <td>{{ usuario.correo }}</td>
                             <td>{{ usuario.fnac|date:"d/m/Y" }}</td>
                             <td>{{ usuario.telefono }}</td>
-                            <td> <button class="btn btn-dark" >Detalles</button> </td>
-                            <td> <button class="btn btn-danger">Eliminar</button> </td>
+                            <td> 
+                                <button class="btn btn-dark" >Detalles</button>
+                                <button class="btn btn-danger">Eliminar</button> 
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -44,5 +45,9 @@
             </div>
         </div>
     </section>
+
+    <div>
+        {% include "aplicacion/paginator.html" %}
+    </div>
 
 {% endblock content %}
