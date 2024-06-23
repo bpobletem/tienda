@@ -1,0 +1,84 @@
+{% extends "aplicacion/base.html" %}
+{% load static %}
+
+{% block imports %}
+<link rel="stylesheet" href="{% static "aplicacion/css/perfil.css" %}">
+{% endblock imports %}
+
+
+{% block content %}
+<section>
+    <div class="container">
+        <h1>Hola, Usuario</h1>
+        <div class="row mt-4">
+            <div class="col-12 col-md-3 bg-light rounded">
+                <!-- Menu lateral -->
+                <div class="sidebar p-4 ">
+                    <a href="{% url "perfil" %}">
+                        <div class="">Datos personales</div>
+                    </a>
+                    <hr class="my-4" />
+                    <a href="{% url "direcciones" %}">
+                            <div class="">Direcciones</div>
+                        </a>
+                        <hr class="my-4" />
+                        <a href="{% url "pedidos" %}">
+                            <div class="">Pedidos</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-8">
+                <h2>Mis Datos</h2>
+                <form id="formulario" class="mt-4" action="perfil.html" method="POST">
+                    <div class="mb-3">
+                        <p id="mensajeError" class="mb-3 mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="name" class="form-control" id="nombre" aria-describedby="name" placeholder="Nombre" value="Juan">
+                        <p id="errorNombre" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos</label>
+                        <input type="name" class="form-control" id="apellidos" aria-describedby="name" placeholder="Apellido" value="Perez Gonzalez">
+                        <p id="errorApellidos" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo</label>
+                        <input type="mail" class="form-control" id="email" aria-describedby="mail" placeholder="juan@correo.cl" value="juanito@gmail.com">
+                        <p id="errorCorreo" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Telefono</label>
+                        <input type="phone" class="form-control" id="telefono" aria-describedby="phone" value="912345678">
+                        <p id="errorTelefono" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rut" class="form-label">RUT</label>
+                        <input type="text" class="form-control" id="rut" aria-describedby="rut" value="12345678-9">
+                        <p id="errorRut" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password">
+                        <input type="checkbox" class="me-2" onclick="showPass()">Mostrar contraseña
+                        <p id="errorPassword" class="mensaje-error"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirme contraseña</label>
+                        <input type="password" class="form-control" id="confirm_password">
+                        <input type="checkbox" class="me-2" onclick="showConfirmPass()">Mostrar contraseña
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">Suscribete a nuestras ofertas</label>
+                    </div>
+                    <button type="submit" class="btn btn-dark" id="">Guardar cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,91 @@
+{% extends "aplicacion/baseadmin.html" %}
+{% load static %}
+
+{% block content %}
+
+    <section>
+        <div class="container">
+            <h1>Lista de Usuarios</h1>
+            <div class="row mt-4">
+                <!-- Detalles de usuarios -->
+                <div class="col-12 col-md-8">
+                    <div class="user-details mt-4">
+                        <h2>Detalles del Usuario</h2>
+                        <!-- Datos del usuario -->
+                        <div class="user-info mt-3">
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Nombre:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    Juan
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Apellidos:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    Pérez
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Rut:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    123456789-k
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Dirección:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    Calle 123
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Teléfono:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    +1234567890
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Email:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    juanperez@example.com
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <strong>Fecha de Nacimiento:</strong>
+                                </div>
+                                <div class="col-md-9">
+                                    1990-01-01
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Datos del usuario -->
+                        <!-- Botón atrás -->
+                        <div class="mt-4">
+                            <a href="{% url "totalusuario" %}">
+                                <button class="btn btn-dark">Atrás</button>
+                            </a>
+                        </div>
+                        <!-- Botón atrás -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  
+    <script src="./assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+</body>
+
+</html>

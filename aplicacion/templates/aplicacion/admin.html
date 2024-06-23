@@ -1,0 +1,58 @@
+{% extends "aplicacion/baseadmin.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Barra de Herramientas -->
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Productos</h3>
+            <div>
+                <a href="{% url "anadir" %}" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Añadir producto
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Fin Barra de Herramientas -->
+
+    <!-- PRODUCTOS -->
+    <section>
+        <div class="container">
+            <div class="row" id="product-list">
+                <!-- Tarjetas de productos -->
+                {% if zapatillas %}
+                {% for zapatilla in zapatillas %}
+                    <div class="col-md-3 mb-4">
+                        <div class="card">
+                            <img src="{{ zapatilla.foto.url }}" class="card-img-top"
+                                alt="{{zapatilla.modelo}}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{zapatilla.modelo}}</h5>
+                                <p class="card-text marca">{{zapatilla.marca}}</p>
+                                <p class="card-text precio">${{zapatilla.precio}}</p>
+                                <button href="editar.html" class="btn btn-primary mb-2 mt-2">
+                                    <i class="fa-solid fa-pen"></i> Editar
+                                </button>
+                                <button type="button" class="btn btn-danger" onclick="borrarProducto(this)">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% else %}
+                    <p>No hay productos para mostrar</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <!-- Fin PRODUCTOS -->
+    <script>
+        function borrarProducto(button) {
+            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                const card = button.closest('.col-md-3');
+                card.remove();
+            }
+        }
+    </script>
+{% endblock content %}

@@ -1,0 +1,146 @@
+{% extends "aplicacion/base.html" %}
+{% load static %}
+
+{% block imports %}
+    <link rel="stylesheet" href="{% static "aplicacion/css/perfil.css" %}">
+{% endblock imports %}
+
+{% block content %}
+<section>
+    <div class="container">
+        <h1>Hola, Usuario</h1>
+        <div class="row mt-4">
+            <div class="col-12 col-md-3 bg-light rounded">
+                <!-- Menu lateral -->
+                <div class="sidebar p-4 ">
+                    <a href="{% url "perfil" %}">
+                        <div class="">Datos personales</div>
+                    </a>
+                    <hr class="my-4" />
+                    <a href="{% url "direcciones" %}">
+                            <div class="">Direcciones</div>
+                        </a>
+                        <hr class="my-4" />
+                        <a href="{% url "pedidos" %}">
+                            <div class="">Pedidos</div>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-8">
+                    <h2>Mis Direcciones</h2>
+                    <div class="order-card row mt-4 pb-3 ms-3">
+                        <div class="card-body p-3">
+                            <!-- Single item -->
+                            <div class="row">
+                                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                    <!-- Data -->
+                                    <p><strong>Casa</strong></p>
+                                    <p>Avenida Bienaventurado 123</p>
+                                    <p>Concepcion</p>
+                                    <!-- Data -->
+                                </div>
+                                <div class="col-lg-2 col-md-3 mb-4 mb-lg-0">
+                                </div>
+                                <div class="col-lg-2 col-md-3 mb-4 mb-lg-0">
+                                    <div class="row">
+                                        <!-- Botones editar/eliminar -->
+                                        <button class="btn btn-dark mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">Editar</button>
+                                        <button class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#modalEliminar">Eliminar</button>
+                                        <!-- Modal Eliminar -->
+                                        <div class="modal fade" id="modalEliminar" tabindex="-1"
+                                        aria-labelledby="modalEliminar" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="modalEliminar">Eliminar
+                                                            direccion
+                                                        </h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                        </div>
+                                                    <div class="modal-body">
+                                                        Seguro desea eliminar la direccion?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                        <button type="button" class="btn btn-danger">Si,
+                                                            eliminar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row p-4">
+                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Agregar
+                            nueva direccion</button>
+                            <!-- Modal para agregar direcciones -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva direccion</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="formulario" action="direcciones.html" method="POST">
+                                            <div class="mb-3">
+                                                <label for="direccion" class="form-label">Calle</label>
+                                                <input type="text" class="form-control" id="direccion" aria-describedby="calle">
+                                                <p id="errorDireccion" class="mensaje-error"></p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="depto" class="form-label">Departamento o detalle</label>
+                                                <input type="text" class="form-control" id="depto" aria-describedby="depto">
+                                                <p id="errorDepto" class="mensaje-error"></p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="region" class="form-label">Region</label>
+                                                <select id="region" class="form-control">
+                                                    <option value="">--Selecciona una region--</option>
+                                                    <option value="biobio" id="biobio">Biobio</option>
+                                                    <option value="metropolitana" id="metropolitana">Metropolitana</option>
+                                                </select>
+                                                <p id="errorRegion" class="mensaje-error"></p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="comuna" class="form-label">Comuna</label>
+                                                <select id="comuna" class="form-control">
+                                                    <option value="">--Selecciona una comuna--</option>
+                                                    <option value="concepcion" id="concepcion">Concepcion</option>
+                                                    <option value="talcahuano" id="talcahuano">Talcahuano</option>
+                                                </select>
+                                                <p id="errorComuna" class="mensaje-error"></p>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="dirdefecto">
+                                                <label class="form-check-label" for="dirdefecto">Convertir en
+                                                    dirección por defecto</label>
+                                                </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="submit" class="btn btn-primary" id="btnguardar">Guardar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="{% static "aplicacion/js/vdireccion.js" %}"></script>
+    {% endblock content %}
+    
