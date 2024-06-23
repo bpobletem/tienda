@@ -22,7 +22,7 @@ urlpatterns = [
     path('registro/', registro, name='registro'),
     path('totalpedidos/', totalpedidos, name='totalpedidos'),
     path('totalusuarios/', totalusuarios, name='totalusuarios'),
-    path('usuarios/', usuarios, name='usuarios'),
+    path('usuarios/<str:rut>', usuarios, name='usuarios'),
     path('carrito/', carrito, name='carrito'),
 ] 
 

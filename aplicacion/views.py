@@ -166,8 +166,12 @@ def totalusuarios(request):
 
     return render(request,'aplicacion/totalusuarios.html', datos)
 
-def usuarios(request):
-    return render(request,'aplicacion/usuarios.html')
+def usuarios(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    datos = {
+        'usuario': usuario,
+    }
+    return render(request,'aplicacion/usuarios.html', datos)
 
 def carrito(request):
     return render(request,'aplicacion/carrito.html')
