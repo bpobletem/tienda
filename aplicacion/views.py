@@ -60,13 +60,35 @@ def anadir(request):
 def marca(request, id):
     marca = get_object_or_404(Marca, id=id)
     zapatillas = Zapatilla.objects.filter(marca=marca)
-    datos = {'zapatillas': zapatillas, 'filtro': marca.nombre}
+    page = request.GET.get('page', 1)
+
+    try:
+        paginator = Paginator(zapatillas,10)
+        zapatillas = paginator.page(page)
+    except:
+        raise Http404
+
+    datos = {'entity': zapatillas, 
+             'filtro': marca.nombre,
+             'paginator': paginator
+             }
     return render(request, 'aplicacion/marca.html', datos)
 
 def categoria(request,id):
     categoria = get_object_or_404(Categoria, id=id)
     zapatillas = Zapatilla.objects.filter(categoria=categoria)
-    datos = {'zapatillas': zapatillas, 'filtro': categoria.nombre}
+    page = request.GET.get('page', 1)
+
+    try:
+        paginator = Paginator(zapatillas,10)
+        zapatillas = paginator.page(page)
+    except:
+        raise Http404
+    
+    datos = {'entity': zapatillas, 
+             'filtro': categoria.nombre,
+             'paginator': paginator
+             }
     return render(request,'aplicacion/categoria.html', datos)
 
 def direcciones(request):

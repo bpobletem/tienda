@@ -88,8 +88,8 @@
             </div>
             
             <div class="product-container col-12 col-md-10">
-                {% if zapatillas %}
-                    {% for zapatilla in zapatillas %}
+                {% if entity %}
+                    {% for zapatilla in entity %}
                             <a href="{% url 'producto' zapatilla.id %}">
                                 <div class="card" style="width: 18rem;">
                                     <img src="{{ zapatilla.foto.url }}" class="card-img-top img-fluid" alt="{{ zapatilla.modelo }}">
@@ -108,4 +108,9 @@
         </div>
     </div>
 </section>
+
+<div>
+    {% include "aplicacion/paginator.html" %}
+</div>
+
 {% endblock content %}
