@@ -7,8 +7,11 @@ from django.core.paginator import Paginator
 from django.http import Http404
 
 # Create your views here.
+
+
 def index(request):
-    return render(request,'aplicacion/index.html')
+    return render(request, 'aplicacion/index.html')
+
 
 def producto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
@@ -17,22 +20,24 @@ def producto(request, id):
         'zapatilla': zapatilla,
         'tallas_disponibles': tallas_disponibles
     }
-    return render(request,'aplicacion/producto.html', datos)
+    return render(request, 'aplicacion/producto.html', datos)
+
 
 def administrador(request):
     zapatillas = Zapatilla.objects.order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,5) #Muestra 5 productos por pagina
+        paginator = Paginator(zapatillas, 5)  # Muestra 5 productos por pagina
         zapatillas = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': zapatillas, #ENTITY ES NECESARIO PARA EL PAGINADOR
-            'paginator': paginator}
-    
-    return render(request,'aplicacion/admin.html',datos)
+
+    datos = {'entity': zapatillas,  # ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request, 'aplicacion/admin.html', datos)
+
 
 def detalleproducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
@@ -46,7 +51,8 @@ def detalleproducto(request, id):
 
 
 def adminpedido(request):
-    return render(request,'aplicacion/adminpedido.html')
+    return render(request, 'aplicacion/adminpedido.html')
+
 
 def anadir(request):
     if request.method == 'POST':
@@ -54,19 +60,23 @@ def anadir(request):
         stock_form = StockZapatillaForm(request.POST)
         if zapatilla_form.is_valid() and stock_form.is_valid():
             zapatilla = zapatilla_form.save()
-            stock = stock_form.save(commit=False)
-            stock.zapatilla = zapatilla
-            stock.save()
+            tallas = stock_form.cleaned_data.get('tallas')
+            cantidad = stock_form.cleaned_data.get('cantidad')
+            for talla in tallas:
+                stock = StockZapatilla(
+                    zapatilla=zapatilla, talla=talla, cantidad=cantidad)
+                stock.save()
             return redirect('administrador')
     else:
         zapatilla_form = ZapatillaForm()
         stock_form = StockZapatillaForm()
-    
+
     datos = {
         'zapatilla_form': zapatilla_form,
         'stock_form': stock_form
     }
     return render(request, 'aplicacion/anadir.html', datos)
+
 
 def marca(request, id):
     marca = get_object_or_404(Marca, id=id)
@@ -74,74 +84,85 @@ def marca(request, id):
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,10)
+        paginator = Paginator(zapatillas, 10)
         zapatillas = paginator.page(page)
     except:
         raise Http404
 
-    datos = {'entity': zapatillas, 
+    datos = {'entity': zapatillas,
              'filtro': marca.nombre,
              'paginator': paginator,
              'marca': marca
              }
     return render(request, 'aplicacion/marca.html', datos)
 
-def categoria(request,id):
+
+def categoria(request, id):
     categoria = get_object_or_404(Categoria, id=id)
-    zapatillas = Zapatilla.objects.filter(categoria=categoria).order_by('modelo')
+    zapatillas = Zapatilla.objects.filter(
+        categoria=categoria).order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,10)
+        paginator = Paginator(zapatillas, 10)
         zapatillas = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': zapatillas, 
+
+    datos = {'entity': zapatillas,
              'filtro': categoria.nombre,
              'paginator': paginator,
-             'categoria' : categoria
+             'categoria': categoria
              }
-    
-    return render(request,'aplicacion/categoria.html', datos)
+
+    return render(request, 'aplicacion/categoria.html', datos)
+
 
 def direcciones(request):
-    return render(request,'aplicacion/direcciones.html')
+    return render(request, 'aplicacion/direcciones.html')
 
-def editar(request,id): #editarproducto
-    return render(request,'aplicacion/editar.html')
+
+def editar(request, id):  # editarproducto
+    return render(request, 'aplicacion/editar.html')
+
 
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
-    
+
     if request.method == "POST":
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
             form.save()
-            return redirect('aplicacion/usuarios.html')  # Asumiendo que tienes una vista para listar usuarios
+            # Asumiendo que tienes una vista para listar usuarios
+            return redirect('aplicacion/usuarios.html')
     else:
         form = UsuarioForm(instance=usuario)
 
     datos = {
         'form': form, 'usuario': usuario
     }
-    
+
     return render(request, 'aplicacion/editarusuarios.html', datos)
 
 # def login(request):
 #     return render(request,'aplicacion/registration/login.html')
 
+
 def loginAdmin(request):
-     return render(request,'aplicacion/loginAdmin.html')
+    return render(request, 'aplicacion/loginAdmin.html')
+
 
 def pedidos(request):
-    return render(request,'aplicacion/pedidos.html')
+    return render(request, 'aplicacion/pedidos.html')
+
 
 def perfil(request):
-    return render(request,'aplicacion/perfil.html')
+    return render(request, 'aplicacion/perfil.html')
+
 
 def recuperar(request):
-    return render(request,'aplicacion/recuperar.html')
+    return render(request, 'aplicacion/recuperar.html')
+
 
 def registro(request):
     if request.method == 'POST':
@@ -161,43 +182,46 @@ def registro(request):
         'direccion_form': direccion_form,
     })
 
+
 def totalpedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(pedidos,5)
+        paginator = Paginator(pedidos, 5)
         pedidos = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity' : pedidos, #ENTITY ES NECESARIO PARA EL PAGINADOR
-            'paginator': paginator}
-    
-    return render(request,'aplicacion/totalpedidos.html', datos)
+
+    datos = {'entity': pedidos,  # ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request, 'aplicacion/totalpedidos.html', datos)
+
 
 def totalusuarios(request):
     usuarios = Usuario.objects.order_by('-rut')
-    page = request.GET.get('page',1)
+    page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(usuarios,5)
+        paginator = Paginator(usuarios, 5)
         usuarios = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': usuarios, #ENTITY ES NECESARIO PARA EL PAGINADOR
+
+    datos = {'entity': usuarios,  # ENTITY ES NECESARIO PARA EL PAGINADOR
              'paginator': paginator}
 
-    return render(request,'aplicacion/totalusuarios.html', datos)
+    return render(request, 'aplicacion/totalusuarios.html', datos)
+
 
 def usuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     datos = {
         'usuario': usuario,
     }
-    return render(request,'aplicacion/usuarios.html', datos)
+    return render(request, 'aplicacion/usuarios.html', datos)
+
 
 def carrito(request):
-    return render(request,'aplicacion/carrito.html')
-
+    return render(request, 'aplicacion/carrito.html')

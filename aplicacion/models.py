@@ -2,10 +2,13 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
+
+
 class Direccion(models.Model):
     calle = models.CharField(max_length=255, null=False)
     numero = models.IntegerField(null=False)
-    detalle = models.CharField(max_length=255, null= True, verbose_name="Detalle o Departamento")
+    detalle = models.CharField(
+        max_length=255, null=True, verbose_name="Detalle o Departamento")
     comuna = models.CharField(max_length=255, null=False)
     region = models.CharField(max_length=255, null=False)
 
@@ -39,7 +42,8 @@ class Categoria(models.Model):
 
     def __str__(self):
         return f"{self.nombre}"
-    
+
+
 class Zapatilla(models.Model):
     marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
     modelo = models.CharField(max_length=50, null=False)
@@ -51,19 +55,26 @@ class Zapatilla(models.Model):
     def __str__(self):
         return f"{self.marca} -- {self.modelo}"
 
+
 class StockZapatilla(models.Model):
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.DO_NOTHING)
     talla = models.DecimalField(decimal_places=1, max_digits=3, null=False)
     cantidad = models.IntegerField(null=False, default=0)
 
+    def __str__(self):
+        return f"{self.zapatilla} -- Talla: {self.talla} -- Cantidad: {self.cantidad}"
+
+
 class Carrito(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+
     def __str__(self):
         return f"Carrito de {self.usuario}"
 
+
 class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
-    zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE )
+    zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
 
     def __str__(self):
@@ -71,6 +82,7 @@ class ItemCarrito(models.Model):
 
     def precioTotal(self):
         return self.cantidad * self.zapatilla.precio
+
 
 class Pedido(models.Model):
     ESTADOS_PEDIDO = [
@@ -84,7 +96,8 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     direccion = models.ForeignKey(Direccion, on_delete=models.CASCADE)
     zapatillas = models.ManyToManyField(Zapatilla, through='PedidoZapatilla')
-    estado = models.CharField(max_length=1, choices=ESTADOS_PEDIDO, default='P')
+    estado = models.CharField(
+        max_length=1, choices=ESTADOS_PEDIDO, default='P')
     total = models.IntegerField(default=0)
 
     def __str__(self):
