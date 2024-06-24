@@ -11,7 +11,8 @@ from django.http import Http404
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos
     nike_marca = Marca.objects.get(nombre="Nike")
-    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('-id')[:9]  #ultimos 9 productos NIKE
+    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('id')[:9]  #ultimos 9 productos NIKE
+    
     data = {
         'productos_nuevos': productos_nuevos,
         'productos_nike': productos_nike
@@ -21,11 +22,15 @@ def index(request):
 def producto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     tallas_disponibles = StockZapatilla.objects.filter(zapatilla=zapatilla)
+    productos_relacionados = Zapatilla.objects.filter(categoria__in=zapatilla.categoria.all()).exclude(id=id).distinct()
+
     datos = {
         'zapatilla': zapatilla,
-        'tallas_disponibles': tallas_disponibles
+        'tallas_disponibles': tallas_disponibles,
+        'productos_relacionados': productos_relacionados,
     }
-    return render(request,'aplicacion/producto.html', datos)
+    return render(request, 'aplicacion/producto.html', datos)
+
 
 def administrador(request):
     zapatillas = Zapatilla.objects.order_by('modelo')
@@ -126,7 +131,7 @@ def editarusuarios(request, rut):
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
             form.save()
-            return redirect('aplicacion/usuarios.html')  # Asumiendo que tienes una vista para listar usuarios
+            return redirect('aplicacion/usuarios.html') 
     else:
         form = UsuarioForm(instance=usuario)
 
@@ -229,24 +234,29 @@ def carrito(request):
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
-def agregarCarrito(request, id_zapatilla, talla):
-    zapatilla = get_object_or_404(Zapatilla, id=id_zapatilla)
-    
-    # Obtener el stock para la zapatilla y la talla específica
-    try:
-        stock = StockZapatilla.objects.get(zapatilla=zapatilla, talla=float(talla))
-    except StockZapatilla.DoesNotExist:
-        return redirect('carrito')  # Manejo de error, redirigir o mostrar mensaje
+def agregarCarrito(request, id_zapatilla):
+    if request.method == 'POST':
+        talla = request.POST.get('talla_seleccionada')
+        zapatilla = get_object_or_404(Zapatilla, id=id_zapatilla)
 
-    # Verificar si hay suficiente stock
-    if stock.cantidad > 0:
+        # Verificar si la talla es válida
+        if not talla:
+            return redirect('detalle_zapatilla', id_zapatilla=zapatilla.id)
+
+        talla = talla.replace(',', '.')
+        # Obtener el stock para la zapatilla y la talla específica
+        try:
+            stock = StockZapatilla.objects.get(zapatilla=zapatilla, talla=float(talla))
+        except StockZapatilla.DoesNotExist:
+            return redirect('carrito')  # Manejo de error, redirigir o mostrar mensaje
+
         carrito = request.session.get('carrito', {})
 
         # Agregar la zapatilla al carrito
-        if id_zapatilla in carrito:
-            carrito[id_zapatilla]['cantidad'] += 1
+        if str(id_zapatilla) in carrito:
+            carrito[str(id_zapatilla)]['cantidad'] += 1
         else:
-            carrito[id_zapatilla] = {
+            carrito[str(id_zapatilla)] = {
                 'id': zapatilla.id,
                 'modelo': zapatilla.modelo,
                 'precio': zapatilla.precio,
@@ -254,14 +264,12 @@ def agregarCarrito(request, id_zapatilla, talla):
                 'talla': talla,
             }
 
-        # Actualizar el stock
-        stock.cantidad -= 1
-        stock.save()
-
         # Actualizar la sesión del carrito
         request.session['carrito'] = carrito
         request.session.modified = True
-    return redirect('carrito')
+        return redirect('carrito')
+    return redirect('detalle_zapatilla', id_zapatilla=id_zapatilla)
+
 
 def eliminarCarrito(request, id_item):
     if 'carrito' in request.session:
@@ -274,4 +282,23 @@ def eliminarCarrito(request, id_item):
     return redirect('carrito')
 
 def confirmarCompra(request):
-    return render(request,'aplicacion/compraconfirmada.html')
+    carrito = request.session.get('carrito', {})
+    if not carrito:
+        return redirect('carrito')
+
+    for item_id, item_info in carrito.items():
+        zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
+        stock = get_object_or_404(StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
+
+        if stock.cantidad >= item_info['cantidad']:
+            stock.cantidad -= item_info['cantidad']
+            stock.save()
+        else:
+            # Manejo de error si no hay suficiente stock
+            return redirect('carrito')
+
+    # Vaciar el carrito después de confirmar la compra
+    request.session['carrito'] = {}
+    request.session.modified = True
+
+    return render(request, 'aplicacion/compraconfirmada.html')

@@ -29,7 +29,7 @@ urlpatterns = [
     path('totalusuarios/', totalusuarios, name='totalusuarios'),
     path('usuarios/<str:rut>', usuarios, name='usuarios'),
     path('carrito/', carrito, name='carrito'),
-    path('carrito/<int:id_zapatilla>/<str:talla>', agregarCarrito, name='agregarCarrito'),
+    path('carrito/<int:id_zapatilla>/', agregarCarrito, name='agregarCarrito'),
     path('carrito/<int:id_item>', eliminarCarrito, name='eliminarCarrito'),
     path('compraconfirmada/', confirmarCompra, name="confirmarCompra")
 ] 
