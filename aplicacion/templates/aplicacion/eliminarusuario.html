@@ -13,7 +13,7 @@
                     <form action="{% url 'eliminarUsuario' usuario.rut %}" method="post">
                         {% csrf_token %}
                         <div class="mt-3">
-                            <a href="{% url 'totalusuarios' %}" class="btn btn-secondary">Cancelar</a>
+                            <a href="{% url 'usuarios' usuario.rut %}" class="btn btn-primary">Cancelar</a>
                             <button type="submit" class="btn btn-danger">Eliminar Usuario</button>
                         </div>
                     </form>
