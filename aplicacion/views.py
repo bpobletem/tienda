@@ -265,6 +265,25 @@ def direccionesusuario(request,rut):
     }
     return render(request, 'aplicacion/direccionesusuario.html',data)
 
+def agregardireccion(request,rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    if request.method == 'POST':
+        form = DireccionForm(request.POST)
+        if form.is_valid():
+            direccion = form.save()
+            usuario.direcciones.add(direccion)
+            return redirect('direccionesusuario', rut=usuario.rut)
+    else:
+        form = DireccionForm()
+
+    data = {
+        'form': form,
+        'usuario': usuario
+    }
+
+    return render(request, 'aplicacion/agregardireccion.html', data)
+
+
 def editardirecciones(request,id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()  # Obtener el primer usuario asociado a la dirección
