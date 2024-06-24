@@ -286,7 +286,7 @@ def agregardireccion(request,rut):
 
 def editardirecciones(request,id):
     direccion = get_object_or_404(Direccion, id=id)
-    usuario = direccion.usuario_set.first()  # Obtener el primer usuario asociado a la dirección
+    usuario = direccion.usuario_set.first()
 
     if request.method == 'POST':
         form = DireccionForm(request.POST, instance=direccion)
@@ -305,7 +305,7 @@ def editardirecciones(request,id):
 
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
-    usuario = direccion.usuario_set.first()  # Obtener el primer usuario asociado a la dirección
+    usuario = direccion.usuario_set.first()
     if usuario:
         usuario.direcciones.remove(direccion)
     direccion.delete()

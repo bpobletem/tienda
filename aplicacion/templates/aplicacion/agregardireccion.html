@@ -12,7 +12,7 @@
                         <h5 class="mb-0">Agregar direccion a usuario - {{usuario.rut}}</h5>
                     </div>
                     <div class="card-body">
-                        <!-- Formulario para editar usuario -->
+                        <!-- Formulario para agregar direccion -->
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form | crispy }}

@@ -13,7 +13,7 @@
                         <a class="btn btn-danger" href="{% url 'eliminarUsuario' usuario.rut %}">Eliminar</a> 
                     </div>
                     <div class="card-body">
-                        <!-- Formulario para editar usuario -->
+                        <!-- Formulario para editar direcciones -->
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form | crispy }}
