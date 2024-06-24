@@ -49,7 +49,7 @@ class Zapatilla(models.Model):
     modelo = models.CharField(max_length=50, null=False)
     precio = models.IntegerField(null=False)
     categoria = models.ManyToManyField(Categoria)
-    descripcion = models.CharField(max_length=500, null=False)
+    descripcion = models.CharField(max_length=250, null=False)
     foto = models.ImageField(upload_to='zapatillas')
 
     def __str__(self):

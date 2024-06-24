@@ -7,18 +7,39 @@
     <section>
         <div class="container">
             <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <!-- Título del formulario -->
+                    <h2>Agregar Zapatilla</h2>
+                    
+                    <!-- Mensajes de error -->
+                    {% if zapatilla_form.errors or stock_form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field, errors in zapatilla_form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for field, errors in stock_form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    
                     <!-- Formulario para agregar productos -->
-                    <p id="mensajeError" style="color: red;"></p>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ zapatilla_form|crispy }}
                         {{ stock_form|crispy }}
                         <button type="submit" class="btn btn-primary">Agregar</button>
-                      </form>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Termino seccion producto -->
+    <!-- Termino sección producto -->
     <script src="{% static "aplicacion/js/validareditar.js" %}"></script>
 {% endblock content %}

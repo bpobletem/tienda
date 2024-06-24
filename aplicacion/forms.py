@@ -50,24 +50,33 @@ class ZapatillaForm(forms.ModelForm):
         fields = ['marca', 'modelo', 'precio',
                   'categoria', 'descripcion', 'foto']
         widgets = {
-            'marca': forms.Select(attrs={'class': 'form-control'}),
-            'modelo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el modelo'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese el precio'}),
-            'categoria': forms.SelectMultiple(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Ingrese la descripción'}),
-            'foto': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'marca': forms.Select(attrs={'placeholder': 'Seleccione la marca'}),
+            'modelo': forms.TextInput(attrs={'placeholder': 'Ingrese el modelo'}),
+            'precio': forms.NumberInput(attrs={'placeholder': 'Ingrese el precio'}),
+            'categoria': forms.Select(attrs={'placeholder': 'Seleccione la categoría'}),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ingrese la descripción',
+                'rows': 3,
+                'style': 'width: 100%; height: 150px;'
+            }),
+            'foto': forms.FileInput(attrs={'placeholder': 'Suba una foto'}),
         }
         error_messages = {
             'marca': {
                 'required': 'Este campo es obligatorio',
+                'max_length': 'La marca no puede tener más de 100 caracteres',
             },
             'modelo': {
                 'required': 'Este campo es obligatorio',
-                'max_length': 'El modelo no puede tener más de 50 caracteres',
+                'max_length': 'El modelo no puede tener más de 100 caracteres',
             },
             'precio': {
                 'required': 'Este campo es obligatorio',
                 'invalid': 'Ingrese un número válido',
+            },
+            'categoria': {
+                'required': 'Este campo es obligatorio',
             },
             'descripcion': {
                 'required': 'Este campo es obligatorio',
@@ -80,12 +89,12 @@ class ZapatillaForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
-            Field('marca'),
-            Field('modelo'),
-            Field('precio'),
-            Field('categoria'),
-            Field('descripcion'),
-            Field('foto'),
+            Field('marca', css_class='form-control'),
+            Field('modelo', css_class='form-control'),
+            Field('precio', css_class='form-control'),
+            Field('categoria', css_class='form-control'),
+            Field('descripcion', css_class='form-control'),
+            Field('foto', css_class='form-control-file'),
             Submit('submit', 'Agregar Zapatilla', css_class='btn btn-primary')
         )
 
@@ -98,7 +107,6 @@ class ZapatillaForm(forms.ModelForm):
 
 class StockZapatillaForm(forms.ModelForm):
     tallas = forms.MultipleChoiceField(
-        # Tallas de 7 a 11.5 en incrementos de 0.5
         choices=[(i / 2, i / 2) for i in range(14, 24)],
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'talla-checkbox'}),
     )
@@ -107,6 +115,7 @@ class StockZapatillaForm(forms.ModelForm):
         model = StockZapatilla
         fields = ['tallas', 'cantidad']
         widgets = {
+            'talla': forms.Select(attrs={'class': 'form-control talla-selector'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ingrese la cantidad'}),
         }
         error_messages = {

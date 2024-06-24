@@ -60,12 +60,9 @@ def anadir(request):
         stock_form = StockZapatillaForm(request.POST)
         if zapatilla_form.is_valid() and stock_form.is_valid():
             zapatilla = zapatilla_form.save()
-            tallas = stock_form.cleaned_data.get('tallas')
-            cantidad = stock_form.cleaned_data.get('cantidad')
-            for talla in tallas:
-                stock = StockZapatilla(
-                    zapatilla=zapatilla, talla=talla, cantidad=cantidad)
-                stock.save()
+            stock = stock_form.save(commit=False)
+            stock.zapatilla = zapatilla
+            stock.save()
             return redirect('administrador')
     else:
         zapatilla_form = ZapatillaForm()
