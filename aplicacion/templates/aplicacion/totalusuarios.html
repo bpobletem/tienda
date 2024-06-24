@@ -43,7 +43,7 @@
                                             <td>{{ usuario.telefono }}</td>
                                             <td> 
                                                 <a class="btn btn-primary" href="{% url 'usuarios' usuario.rut %}">Detalles</a>
-                                                <button class="btn btn-danger">Eliminar</button> 
+                                                <a class="btn btn-danger" href="{% url 'eliminarUsuario' usuario.rut %}">Eliminar</a> 
                                             </td>
                                         </tr>
                                     {% endfor %}

@@ -124,22 +124,7 @@ def direcciones(request):
 def editar(request,id): #editarproducto
     return render(request,'aplicacion/editar.html')
 
-def editarusuarios(request, rut):
-    usuario = get_object_or_404(Usuario, rut=rut)
-    
-    if request.method == "POST":
-        form = UsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('aplicacion/usuarios.html') 
-    else:
-        form = UsuarioForm(instance=usuario)
 
-    datos = {
-        'form': form, 'usuario': usuario
-    }
-    
-    return render(request, 'aplicacion/editarusuarios.html', datos)
 
 # def login(request):
 #     return render(request,'aplicacion/registration/login.html')
@@ -221,7 +206,7 @@ def agregarUsuario(request):
             usuario = usuario_form.save()
             direccion = direccion_form.save()
             usuario.direcciones.add(direccion)
-            return redirect('index')
+            return redirect('totalusuarios')
     else:
         usuario_form = UsuarioForm()
         direccion_form = DireccionForm()
@@ -232,6 +217,43 @@ def agregarUsuario(request):
     }
 
     return render(request, 'aplicacion/agregarusuario.html', data)
+
+def eliminarUsuario(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+
+    if request.method == 'POST':
+        # Eliminar todos los pedidos asociados al usuario
+        pedidos = Pedido.objects.filter(cliente=usuario)
+        for pedido in pedidos:
+            pedido.delete()
+
+        # Eliminar todas las direcciones asociadas al usuario
+        usuario.direcciones.clear()
+
+        # Eliminar el usuario
+        usuario.delete()
+
+        return redirect('totalusuarios')
+
+    # Si no es un POST request, renderizar la página de confirmación de eliminación
+    return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
+
+def editarusuarios(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    
+    if request.method == "POST":
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('aplicacion/usuarios.html') 
+    else:
+        form = UsuarioForm(instance=usuario)
+
+    datos = {
+        'form': form, 'usuario': usuario
+    }
+    
+    return render(request, 'aplicacion/editarusuarios.html', datos)
 
 def carrito(request):
     carrito = request.session.get('carrito', {})
