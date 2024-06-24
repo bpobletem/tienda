@@ -3,15 +3,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-5 col-12 col-md-6 mx-auto">
-    <h3 id="registro" class="text-center mb-4">Agregar usuario</h3>
-    <form id="formulario" method="post" class="needs-validation">
-        {% csrf_token %}
-        {{ usuario_form|crispy }}
-        {{ direccion_form|crispy }}
-        <p id="mensajeError"></p>
-        <a href="{% url "totalusuarios" %}" class="btn btn-danger col-auto mb-3">Cancelar</a>
-        <button type="submit" class="btn btn-primary col-auto mb-3">Guardar</button>
-    </form>
-</div>
+
+<section class="h-100 gradient-custom">
+    <div class="container">
+        <div class="row d-flex justify-content-center my-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header py-3">
+                        <h5 class="mb-0">Agregar Usuario</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Formulario para editar usuario -->
+                        <form method="post" class="needs-validation">
+                            {% csrf_token %}
+                            {{ usuario_form|crispy }}
+                            {{ direccion_form|crispy }}
+                            <p id="mensajeError"></p>
+                            <a href="{% url "totalusuarios" %}" class="btn btn-danger col-auto mb-3">Cancelar</a>
+                            <button type="submit" class="btn btn-primary col-auto mb-3">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock content %}
