@@ -52,7 +52,7 @@ class Zapatilla(models.Model):
         return f"{self.marca} -- {self.modelo}"
 
 class StockZapatilla(models.Model):
-    zapatilla = models.ForeignKey(Zapatilla, on_delete=models.DO_NOTHING)
+    zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     talla = models.DecimalField(decimal_places=1, max_digits=3, null=False)
     cantidad = models.IntegerField(null=False, default=0)
 
@@ -65,9 +65,10 @@ class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE )
     cantidad = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True, null=True) #Hay que sacar el null
 
     def __str__(self):
-        return f"{self.cantidad} - {self.zapatilla.modelo} - {self.carrito}"
+        return f"{self.cantidad} - {self.zapatilla.modelo}"
 
     def precioTotal(self):
         return self.cantidad * self.zapatilla.precio

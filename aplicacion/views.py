@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Zapatilla, Categoria, Marca, StockZapatilla, Usuario, Pedido
+from .models import (Zapatilla, Categoria, Marca, StockZapatilla, 
+Usuario, Pedido, Carrito, ItemCarrito)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm
@@ -199,5 +200,71 @@ def usuarios(request, rut):
     return render(request,'aplicacion/usuarios.html', datos)
 
 def carrito(request):
-    return render(request,'aplicacion/carrito.html')
+    carrito = request.session.get('carrito', {})
+    zapatillas_en_carrito = []
+    total_carrito = 0
 
+    for item_id, item_info in carrito.items():
+        zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
+        subtotal = item_info['cantidad'] * zapatilla.precio
+        total_carrito += subtotal
+
+        zapatillas_en_carrito.append({
+            'zapatilla': zapatilla,
+            'cantidad': item_info['cantidad'],
+            'subtotal': subtotal,
+            'talla': item_info['talla'],
+        })
+
+    datos = {
+        'zapatillas_en_carrito': zapatillas_en_carrito,
+        'total_carrito': total_carrito,
+    }
+    return render(request, 'aplicacion/carrito.html', datos)
+
+def agregarCarrito(request, id_zapatilla, talla):
+    zapatilla = get_object_or_404(Zapatilla, id=id_zapatilla)
+    
+    # Obtener el stock para la zapatilla y la talla específica
+    try:
+        stock = StockZapatilla.objects.get(zapatilla=zapatilla, talla=float(talla))
+    except StockZapatilla.DoesNotExist:
+        return redirect('carrito')  # Manejo de error, redirigir o mostrar mensaje
+
+    # Verificar si hay suficiente stock
+    if stock.cantidad > 0:
+        carrito = request.session.get('carrito', {})
+
+        # Agregar la zapatilla al carrito
+        if id_zapatilla in carrito:
+            carrito[id_zapatilla]['cantidad'] += 1
+        else:
+            carrito[id_zapatilla] = {
+                'id': zapatilla.id,
+                'modelo': zapatilla.modelo,
+                'precio': zapatilla.precio,
+                'cantidad': 1,
+                'talla': talla,
+            }
+
+        # Actualizar el stock
+        stock.cantidad -= 1
+        stock.save()
+
+        # Actualizar la sesión del carrito
+        request.session['carrito'] = carrito
+        request.session.modified = True
+    return redirect('carrito')
+
+def eliminarCarrito(request, id_item):
+    if 'carrito' in request.session:
+        carrito = request.session['carrito']
+        if str(id_item) in carrito:
+            del carrito[str(id_item)]
+            request.session['carrito'] = carrito
+            request.session.modified = True
+
+    return redirect('carrito')
+
+def confirmarCompra(request):
+    return render(request,'aplicacion/compraconfirmada.html')

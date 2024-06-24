@@ -12,69 +12,71 @@
     <div class="container">
         <div class="row">
             <div class="col-12 col-md-6">
-                    <div class="product-img">
-                        <img src="{{ zapatilla.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla.modelo }}">
-                        <div class="img-buttons">
-                            <button type="button" class="img-btn btn btn-outline-light">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="img-btn btn btn-outline-light">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
+                <div class="product-img">
+                    <img src="{{ zapatilla.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla.modelo }}">
+                    <div class="img-buttons">
+                        <button type="button" class="img-btn btn btn-outline-light">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="img-btn btn btn-outline-light">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="col-12 col-md-6">
-                    <h3 class="producto-modelo"> {{zapatilla.modelo}} </h3>
-                    <p class="text-body-secondary producto-marca mb-2"> {{zapatilla.marca}} </p>
-                    <p class="producto-descripcion mb-2"> {{zapatilla.descripcion}} </p>
-                    <p class="text-body-emphasis producto-precio mb-3 fw-medium">${{zapatilla.precio}} </p>
-                    <p class="mb-1">Valor en dolares:</p>
-                    <p id="dolar" class="mb-3 fw-medium"></p>
-                    <p class="mb-1">Valor dolar actual:</p>
-                    <p id="dolar-actual" class="mb-3 fw-medium"></p>
-                    <div class="producto-tallas">
-                        <div class="producto-tallas-text d-flex justify-content-between">
-                            <p class="producto-tallas">Tallas disponibles:</p>
-                            <a data-bs-toggle="modal" data-bs-target="#modalTallas">
-                                <p class="text-decoration-underline text-body-secondary">Guía de tallas</p>
-                            </a>
-                            <!-- Modal -->
-                            <div class="modal fade " id="modalTallas" tabindex="-1" aria-labelledby="modalTallasLabel"
+            </div>
+            <div class="col-12 col-md-6">
+                <h3 class="producto-modelo"> {{ zapatilla.modelo }} </h3>
+                <p class="text-body-secondary producto-marca mb-2"> {{ zapatilla.marca }} </p>
+                <p class="producto-descripcion mb-2"> {{ zapatilla.descripcion }} </p>
+                <p class="text-body-emphasis producto-precio mb-3 fw-medium">${{ zapatilla.precio }} </p>
+                
+                <!-- Mostrar las tallas disponibles -->
+                <div class="producto-tallas">
+                    <div class="producto-tallas-text d-flex justify-content-between">
+                        <p class="producto-tallas">Tallas disponibles:</p>
+                        <a data-bs-toggle="modal" data-bs-target="#modalTallas">
+                            <p class="text-decoration-underline text-body-secondary">Guía de tallas</p>
+                        </a>
+                        <!-- Modal -->
+                        <div class="modal fade " id="modalTallas" tabindex="-1" aria-labelledby="modalTallasLabel"
                             aria-hidden="true">
-                                <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="modalTallasLabel">Guía de tallas</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                            <img src="assets/images/guia-tallas-nike.webp" class="img-fluid">
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cerrar</button>
-                                            </div>
-                                        </div>
+                            <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalTallasLabel">Guía de tallas</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="assets/images/guia-tallas-nike.webp" class="img-fluid">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        {%if tallas_disponibles%}
-                        <div class="d-flex gap-2 flex-wrap p-3" aria-label="Basic example">
-                            {% for talla in tallas_disponibles %}
+                    </div>
+                    
+                    <!-- Botones de Tallas -->
+                    {% if tallas_disponibles %}
+                    <div class="d-flex gap-2 flex-wrap p-3" aria-label="Basic example">
+                        {% for talla in tallas_disponibles %}
+                            <a href="{% url 'agregarCarrito' id_zapatilla=zapatilla.id talla=talla.talla %}">
                                 <button type="button" class="btn btn-outline-secondary mb-2" 
                                     {% if talla.cantidad == 0 %}disabled{% endif %}>
                                     {{ talla.talla }}
                                 </button>
-                            {% endfor %}
-                        </div>
+                            </a>
+                        {% endfor %}
                     </div>
-                    <a href="carrito.html">
+                    <a href="{% url 'agregarCarrito' id_zapatilla=zapatilla.id talla='default' %}">
                         <button class="btn btn-dark mb-2">Agregar al carrito</button>
                     </a>
-                    {%else%} <p class="mt-3 mb-3 fw-bold" >No hay stock disponible en estos momentos.</p>
-                    {%endif%}
+                    {% else %}
+                        <p class="mt-3 mb-3 fw-bold">No hay stock disponible en estos momentos.</p>
+                    {% endif %}
                     
                     <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
@@ -117,6 +119,24 @@
         </div>
     </div>
 </section>
+
+<script>
+    // Manejar la selección de la talla y habilitar el botón de agregar al carrito
+    document.addEventListener('DOMContentLoaded', function () {
+        const tallaButtons = document.querySelectorAll('.talla-btn');
+        const agregarCarritoBtn = document.querySelector('.agregar-carrito-btn');
+        const tallaIdInput = document.querySelector('#talla-id-input');
+
+        tallaButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                tallaButtons.forEach(btn => btn.classList.remove('btn-primary'));
+                this.classList.add('btn-primary');
+                tallaIdInput.value = this.getAttribute('data-talla-id');
+                agregarCarritoBtn.disabled = false;
+            });
+        });
+    });
+</script>
 <!-- Termino seccion producto -->
 
 <!-- Carrusel productos relacionados -->
