@@ -169,10 +169,12 @@ def registro(request):
         usuario_form = UsuarioForm()
         direccion_form = DireccionForm()
 
-    return render(request, 'registration/registro.html', {
+    data = {
         'usuario_form': usuario_form,
         'direccion_form': direccion_form,
-    })
+    }
+
+    return render(request, 'registration/registro.html', data)
 
 def totalpedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
@@ -210,6 +212,26 @@ def usuarios(request, rut):
         'usuario': usuario,
     }
     return render(request,'aplicacion/usuarios.html', datos)
+
+def agregarUsuario(request):
+    if request.method == 'POST':
+        usuario_form = UsuarioForm(request.POST)
+        direccion_form = DireccionForm(request.POST)
+        if usuario_form.is_valid() and direccion_form.is_valid():
+            usuario = usuario_form.save()
+            direccion = direccion_form.save()
+            usuario.direcciones.add(direccion)
+            return redirect('index')
+    else:
+        usuario_form = UsuarioForm()
+        direccion_form = DireccionForm()
+
+    data = {
+        'usuario_form': usuario_form,
+        'direccion_form': direccion_form,
+    }
+
+    return render(request, 'aplicacion/agregarusuario.html', data)
 
 def carrito(request):
     carrito = request.session.get('carrito', {})

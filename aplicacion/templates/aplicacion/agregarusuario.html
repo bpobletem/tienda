@@ -1,0 +1,17 @@
+{% extends "aplicacion/baseadmin.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5 col-12 col-md-6 mx-auto">
+    <h3 id="registro" class="text-center mb-4">Agregar usuario</h3>
+    <form id="formulario" method="post" class="needs-validation">
+        {% csrf_token %}
+        {{ usuario_form|crispy }}
+        {{ direccion_form|crispy }}
+        <p id="mensajeError"></p>
+        <a href="{% url "totalusuarios" %}" class="btn btn-danger col-auto mb-3">Cancelar</a>
+        <button type="submit" class="btn btn-primary col-auto mb-3">Guardar</button>
+    </form>
+</div>
+{% endblock content %}
