@@ -10,7 +10,7 @@ class Direccion(models.Model):
     region = models.CharField(max_length=255, null=False)
 
     def __str__(self):
-        return f"{self.calle} {self.numero}, {self.comuna}"
+        return f"{self.calle} {self.numero}, {self.detalle}, {self.comuna}, {self.region}"
 
 
 class Usuario(models.Model):
