@@ -72,7 +72,8 @@
                             </div>
                             <div class="pt-4">
                                 <a class="btn btn-outline-primary" href="{% url 'totalusuarios' %}">Volver</a> 
-                                <a class="btn btn-primary me-3" href="{% url 'editarusuarios' usuario.rut %}">Editar</a>
+                                <a class="btn btn-outline-primary" href='{% url "direccionesusuario" usuario.rut %}' >Editar direcciones</a>
+                                <a class="btn btn-primary me-3" href="{% url 'editarusuarios' usuario.rut %}">Editar datos</a>
                             </div>
                         </div>
                     </div>

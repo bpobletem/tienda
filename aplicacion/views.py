@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import (Zapatilla, Categoria, Marca, StockZapatilla, 
-Usuario, Pedido, Carrito, ItemCarrito)
+Usuario, Pedido, Carrito, ItemCarrito, Direccion)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm
@@ -255,6 +255,40 @@ def editarusuarios(request, rut):
         'usuario' : usuario
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
+
+def direccionesusuario(request,rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    direcciones = usuario.direcciones.all()
+    data = {
+        'usuario': usuario,
+        'direcciones': direcciones,
+    }
+    return render(request, 'aplicacion/direccionesusuario.html',data)
+
+def editardirecciones(request,id):
+    direccion = get_object_or_404(Direccion, id=id)
+    usuario = direccion.usuario_set.first()  # Obtener el primer usuario asociado a la dirección
+
+    if request.method == 'POST':
+        form = DireccionForm(request.POST, instance=direccion)
+        if form.is_valid():
+            form.save()
+            return redirect('direccionesusuario', rut=usuario.rut)
+    else:
+        form = DireccionForm(instance=direccion)
+
+    data = {
+        'direccion':direccion,
+        'usuario': usuario,
+        'form': form,
+    }
+    return render(request, 'aplicacion/editardirecciones.html', data)
+
+def eliminardireccion(request, id):
+    direccion = get_object_or_404(Direccion, id=id)
+    rut = direccion.usuario_set.first().rut
+    direccion.delete()
+    return redirect('editardirecciones', id=id)
 
 def carrito(request):
     carrito = request.session.get('carrito', {})

@@ -2,7 +2,8 @@ from django.urls import path, include
 from .views import (index, producto,administrador, detalleproducto, loginAdmin, 
                     adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,
                     perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca, 
-                    agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario
+                    agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario,
+                    direccionesusuario, eliminardireccion, editardirecciones
 )
 from django.conf.urls.static import static
 from django.conf import settings
@@ -22,6 +23,9 @@ urlpatterns = [
     path('editarusuarios/<str:rut>', editarusuarios, name='editarusuarios'),
     path('agregarusuario/', agregarUsuario, name="agregarUsuario"),
     path('eliminarusuario/<str:rut>', eliminarUsuario, name="eliminarUsuario"),
+    path('direccionesusuario/<str:rut>', direccionesusuario, name="direccionesusuario"),
+    path('eliminardireccion/<int:id>', eliminardireccion, name="eliminardireccion"),
+    path('editardirecciones/<int:id>', editardirecciones, name="editardirecciones"),
     # path('login/', login, name='login'),
     path('loginAdmin/', loginAdmin, name='loginAdmin'),
     path('pedidos/', pedidos, name='pedidos'),
