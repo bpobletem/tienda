@@ -3,7 +3,7 @@ from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
 Usuario, Pedido, Carrito, ItemCarrito)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm
+from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm
 from django.core.paginator import Paginator
 from django.http import Http404
 
@@ -240,20 +240,22 @@ def eliminarUsuario(request, rut):
 
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
-    
-    if request.method == "POST":
-        form = UsuarioForm(request.POST, instance=usuario)
-        if form.is_valid():
-            form.save()
-            return redirect('aplicacion/usuarios.html') 
-    else:
-        form = UsuarioForm(instance=usuario)
 
-    datos = {
-        'form': form, 'usuario': usuario
+    if request.method == 'POST':
+        form = UpdateUsuarioForm(instance=usuario)
+
+        if form.is_valid():
+            usuario.save()
+            return redirect(to="totalusuarios")
+
+    else:
+        form = UpdateUsuarioForm(instance=usuario)
+
+    data = {
+        'form': form,
+        'usuario' : usuario
     }
-    
-    return render(request, 'aplicacion/editarusuarios.html', datos)
+    return render(request, 'aplicacion/editarusuarios.html', data)
 
 def carrito(request):
     carrito = request.session.get('carrito', {})

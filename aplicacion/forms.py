@@ -13,6 +13,8 @@ class DireccionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['detalle'].required = False
 
+
+
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
@@ -38,6 +40,12 @@ class UsuarioForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+class UpdateUsuarioForm(forms.ModelForm):
+    fnac = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
     
 class ZapatillaForm(forms.ModelForm):
     class Meta:
