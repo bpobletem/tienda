@@ -286,9 +286,11 @@ def editardirecciones(request,id):
 
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
-    rut = direccion.usuario_set.first().rut
+    usuario = direccion.usuario_set.first()  # Obtener el primer usuario asociado a la dirección
+    if usuario:
+        usuario.direcciones.remove(direccion)
     direccion.delete()
-    return redirect('editardirecciones', id=id)
+    return redirect('direccionesusuario', rut=usuario.rut)
 
 def carrito(request):
     carrito = request.session.get('carrito', {})

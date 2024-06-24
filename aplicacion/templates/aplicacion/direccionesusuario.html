@@ -40,7 +40,7 @@
                                     <td>{{ direccion.region }}</td>
                                     <td>
                                         <a href="{% url "editardirecciones" direccion.id %}" class="btn btn-primary">Editar</a>
-                                        <a href="" class="btn btn-danger">Eliminar</a>
+                                        <a href="{% url "eliminardireccion" direccion.id %}" class="btn btn-danger">Eliminar</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
