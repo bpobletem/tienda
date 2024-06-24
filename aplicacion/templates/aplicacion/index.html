@@ -9,9 +9,6 @@
             <div class="carousel-item active">
                 <img src="{% static "aplicacion/img/header1.webp" %}" class="d-block w-100" alt="...">
             </div>
-            <div class="carousel-item">
-                <img src="{% static "aplicacion/img/header1.webp" %}" class="d-block w-100" alt="...">
-            </div>
         </div>
     </div>
 </header>
@@ -19,123 +16,40 @@
 <!-- Carrusel de productos -->
 <section>
     <div class="container">
-        <h3>Nike</h3>
+        <h3>Productos Nuevos</h3>
     </div>
-    <div id="carouselExampleControls" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div id="carrusel1" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="card-wrapper container-sm d-flex  justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
+            {% for producto in productos_nuevos %}
+                {% if forloop.counter0|divisibleby:3 %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="card-wrapper container-sm d-flex justify-content-around">
+                {% endif %}
+                            <a href="producto/{{ producto.id }}/">
+                                <div class="card" style="width: 18rem;">
+                                    <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
+                                        <p class="card-text text-body-secondary">{{ producto.marca }}</p>
+                                        <p class="card-text precio">${{ producto.precio }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
                         </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src=" {% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card-wrapper container-sm d-flex   justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card-wrapper container-sm d-flex  justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <button class="carousel-control-prev d-none d-lg-block" type="button"
-                data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next d-none d-lg-block" type="button"
-                data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
+        <button class="carousel-control-prev d-none d-lg-block" type="button" data-bs-target="#carrusel1" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next d-none d-lg-block" type="button" data-bs-target="#carrusel1" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </section>
 
 <!-- Otro carrusel de productos -->
@@ -143,121 +57,38 @@
     <div class="container">
         <h3>Nike</h3>
     </div>
-    <div id="carouselExampleControls2" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div id="carrusel2" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="card-wrapper container-sm d-flex  justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
+            {% for producto in productos_nike %}
+                {% if forloop.counter0|divisibleby:3 %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="card-wrapper container-sm d-flex justify-content-around">
+                {% endif %}
+                            <a href="producto/{{ producto.id }}/">
+                                <div class="card" style="max-width: 18rem;">
+                                    <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
+                                        <p class="card-text text-body-secondary">{{ producto.marca }}</p>
+                                        <p class="card-text precio">${{ producto.precio }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
                         </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card-wrapper container-sm d-flex   justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="card-wrapper container-sm d-flex  justify-content-around">
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="producto.html">
-                        <div class="card" style="max-width: 18rem;">
-                            <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title mb-1">Air Max Pulse</h5>
-                                <p class="card-text text-body-secondary">Nike</p>
-                                <p class="card-text precio">$150.000</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <button class="carousel-control-prev d-none d-lg-block" type="button"
-                data-bs-target="#carouselExampleControls2" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next d-none d-lg-block" type="button"
-                data-bs-target="#carouselExampleControls2" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
+        <button class="carousel-control-prev d-none d-lg-block" type="button" data-bs-target="#carrusel2" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next d-none d-lg-block" type="button" data-bs-target="#carrusel2" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </section>
 
 <!-- Populares -->

@@ -1,5 +1,10 @@
 from django.urls import path, include
-from .views import index, producto,administrador, detalleproducto, loginAdmin, adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca
+from .views import (index, producto,administrador, detalleproducto, loginAdmin, 
+                    adminpedido,anadir,categoria,direcciones,editar,editarusuarios,pedidos,
+                    perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca, 
+                    agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario,
+                    direccionesusuario, eliminardireccion, editardirecciones, agregardireccion
+)
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -14,7 +19,14 @@ urlpatterns = [
     path('marca/<int:id>/', marca, name='marca'),
     path('direcciones/', direcciones, name='direcciones'),
     path('editar/<int:id>', editar, name='editar'),
+    path('usuarios/<str:rut>', usuarios, name='usuarios'),
     path('editarusuarios/<str:rut>', editarusuarios, name='editarusuarios'),
+    path('agregarusuario/', agregarUsuario, name="agregarUsuario"),
+    path('eliminarusuario/<str:rut>', eliminarUsuario, name="eliminarUsuario"),
+    path('direccionesusuario/<str:rut>', direccionesusuario, name="direccionesusuario"),
+    path('agregardireccion/<str:rut>', agregardireccion, name="agregardireccion"),
+    path('eliminardireccion/<int:id>', eliminardireccion, name="eliminardireccion"),
+    path('editardirecciones/<int:id>', editardirecciones, name="editardirecciones"),
     # path('login/', login, name='login'),
     path('loginAdmin/', loginAdmin, name='loginAdmin'),
     path('pedidos/', pedidos, name='pedidos'),
@@ -23,8 +35,10 @@ urlpatterns = [
     path('registro/', registro, name='registro'),
     path('totalpedidos/', totalpedidos, name='totalpedidos'),
     path('totalusuarios/', totalusuarios, name='totalusuarios'),
-    path('usuarios/<str:rut>', usuarios, name='usuarios'),
     path('carrito/', carrito, name='carrito'),
+    path('carrito/<int:id_zapatilla>/', agregarCarrito, name='agregarCarrito'),
+    path('carrito/<int:id_item>', eliminarCarrito, name='eliminarCarrito'),
+    path('compraconfirmada/', confirmarCompra, name="confirmarCompra"),
 ] 
 
 if settings.DEBUG:
