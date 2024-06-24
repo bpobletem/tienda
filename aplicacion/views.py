@@ -242,10 +242,9 @@ def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
     if request.method == 'POST':
-        form = UpdateUsuarioForm(instance=usuario)
-
+        form = UpdateUsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
-            usuario.save()
+            form.save()
             return redirect(to="totalusuarios")
 
     else:
