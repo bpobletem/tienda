@@ -7,9 +7,16 @@ from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm
 from django.core.paginator import Paginator
 from django.http import Http404
 
-# Create your views here.
+
 def index(request):
-    return render(request,'aplicacion/index.html')
+    productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos
+    nike_marca = Marca.objects.get(nombre="Nike")
+    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('-id')[:9]  #ultimos 9 productos NIKE
+    data = {
+        'productos_nuevos': productos_nuevos,
+        'productos_nike': productos_nike
+    }
+    return render(request, 'aplicacion/index.html', data)
 
 def producto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
