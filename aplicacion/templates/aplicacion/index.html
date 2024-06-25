@@ -7,13 +7,14 @@
     <div id="carouselHero" class="carousel slide container">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="{% static "aplicacion/img/header1.webp" %}" class="d-block w-100" alt="...">
+                <img src="{% static 'aplicacion/img/header1.webp' %}" class="d-block w-100" alt="...">
             </div>
         </div>
     </div>
 </header>
 
 <!-- Carrusel de productos -->
+{% if productos_nuevos %}
 <section>
     <div class="container">
         <h3>Productos Nuevos</h3>
@@ -21,24 +22,24 @@
     <div id="carrusel1" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             {% for producto in productos_nuevos %}
-                {% if forloop.counter0|divisibleby:3 %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="card-wrapper container-sm d-flex justify-content-around">
-                {% endif %}
-                            <a href="producto/{{ producto.id }}/">
-                                <div class="card" style="width: 18rem;">
-                                    <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
-                                        <p class="card-text text-body-secondary">{{ producto.marca }}</p>
-                                        <p class="card-text precio">${{ producto.precio }}</p>
-                                    </div>
-                                </div>
-                            </a>
-                {% if forloop.counter|divisibleby:3 or forloop.last %}
+            {% if forloop.counter0|divisibleby:3 %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="card-wrapper container-sm d-flex justify-content-around">
+                    {% endif %}
+                    <a href="producto/{{ producto.id }}/">
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
+                            <div class="card-body">
+                                <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
+                                <p class="card-text text-body-secondary">{{ producto.marca }}</p>
+                                <p class="card-text precio">${{ producto.precio }}</p>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
+                    </a>
+                    {% if forloop.counter|divisibleby:3 or forloop.last %}
+                </div>
+            </div>
+            {% endif %}
             {% endfor %}
         </div>
         <button class="carousel-control-prev d-none d-lg-block" type="button" data-bs-target="#carrusel1" data-bs-slide="prev">
@@ -51,8 +52,10 @@
         </button>
     </div>
 </section>
+{% endif %}
 
 <!-- Otro carrusel de productos -->
+{% if productos_nike %}
 <section>
     <div class="container">
         <h3>Nike</h3>
@@ -60,24 +63,24 @@
     <div id="carrusel2" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             {% for producto in productos_nike %}
-                {% if forloop.counter0|divisibleby:3 %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="card-wrapper container-sm d-flex justify-content-around">
-                {% endif %}
-                            <a href="producto/{{ producto.id }}/">
-                                <div class="card" style="max-width: 18rem;">
-                                    <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
-                                        <p class="card-text text-body-secondary">{{ producto.marca }}</p>
-                                        <p class="card-text precio">${{ producto.precio }}</p>
-                                    </div>
-                                </div>
-                            </a>
-                {% if forloop.counter|divisibleby:3 or forloop.last %}
+            {% if forloop.counter0|divisibleby:3 %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="card-wrapper container-sm d-flex justify-content-around">
+                    {% endif %}
+                    <a href="producto/{{ producto.id }}/">
+                        <div class="card" style="max-width: 18rem;">
+                            <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
+                            <div class="card-body">
+                                <h5 class="card-title mb-1">{{ producto.modelo }}</h5>
+                                <p class="card-text text-body-secondary">{{ producto.marca }}</p>
+                                <p class="card-text precio">${{ producto.precio }}</p>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
+                    </a>
+                    {% if forloop.counter|divisibleby:3 or forloop.last %}
+                </div>
+            </div>
+            {% endif %}
             {% endfor %}
         </div>
         <button class="carousel-control-prev d-none d-lg-block" type="button" data-bs-target="#carrusel2" data-bs-slide="prev">
@@ -90,6 +93,7 @@
         </button>
     </div>
 </section>
+{% endif %}
 
 <!-- Populares -->
 <section>

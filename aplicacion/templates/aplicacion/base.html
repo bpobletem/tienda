@@ -95,7 +95,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% if user.is_authenticated %}
-                            <li class="dropdown-item">Hola {{ user.username }}!</li>
+                            <li class="dropdown-item">Hola {{ user.nombre }}!</li>
                             <li><a class="dropdown-item" href="{% url "perfil" %}">Perfil</a></li>
                             <li>
                                 <form  action="{% url 'logout' %}" method="post">
