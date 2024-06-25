@@ -82,12 +82,14 @@
 
 
                 <ul class="navbar-nav me-5 mb-2 mb-lg-0 d-flex flex-row align-items-center gap-3">
-
-                    <li class="nav-item shopping-cart">
-                        <a href="{% url "carrito" %}">
-                            <i class="fa-solid fa-cart-shopping text-body-secondary"></i>
-                        </a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item shopping-cart">
+                            <a href="{% url "carrito" %}">
+                                <i class="fa-solid fa-cart-shopping text-body-secondary"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                    {% endif %}
 
                     <li class="nav-item dropstart profile">
                         <a href="#" class="nav-link dropdown-toggle " role="button" data-bs-toggle="dropdown">

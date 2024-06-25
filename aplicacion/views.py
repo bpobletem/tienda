@@ -3,10 +3,19 @@ from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
 Usuario, Pedido, Carrito, ItemCarrito, Direccion)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm
+from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm, AdminLoginForm
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import user_passes_test, login_required
 
+def admin_required(view_func):
+    actual_decorator = user_passes_test(
+        lambda u: u.is_active and u.is_superuser,
+        login_url='loginAdmin',  # URL de la vista de login de administradores
+        redirect_field_name=None
+    )
+    return actual_decorator(view_func)
 
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos
@@ -31,7 +40,7 @@ def producto(request, id):
     }
     return render(request, 'aplicacion/producto.html', datos)
 
-
+@admin_required
 def administrador(request):
     zapatillas = Zapatilla.objects.order_by('modelo')
     page = request.GET.get('page', 1)
@@ -47,6 +56,7 @@ def administrador(request):
     
     return render(request,'aplicacion/admin.html',datos)
 
+@admin_required
 def detalleproducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     tallas_disponibles = StockZapatilla.objects.filter(zapatilla=zapatilla)
@@ -57,10 +67,11 @@ def detalleproducto(request, id):
 
     return render(request, 'aplicacion/detalleproducto.html', datos)
 
-
+@admin_required
 def adminpedido(request):
     return render(request,'aplicacion/adminpedido.html')
 
+@admin_required
 def anadir(request):
     if request.method == 'POST':
         zapatilla_form = ZapatillaForm(request.POST, request.FILES)
@@ -130,7 +141,20 @@ def editar(request,id): #editarproducto
 #     return render(request,'aplicacion/registration/login.html')
 
 def loginAdmin(request):
-     return render(request,'aplicacion/loginAdmin.html')
+    if request.method == 'POST':
+        form = AdminLoginForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('admin')  # Redirigir a la página de administrador después del login
+
+    else:
+        form = AdminLoginForm()
+
+    return render(request, 'aplicacion/loginAdmin.html', {'form': form})
 
 def pedidos(request):
     return render(request,'aplicacion/pedidos.html')
@@ -161,6 +185,7 @@ def registro(request):
 
     return render(request, 'registration/registro.html', data)
 
+@admin_required
 def totalpedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
     page = request.GET.get('page', 1)
@@ -176,6 +201,7 @@ def totalpedidos(request):
     
     return render(request,'aplicacion/totalpedidos.html', datos)
 
+@admin_required
 def totalusuarios(request):
     usuarios = Usuario.objects.order_by('-rut')
     page = request.GET.get('page',1)
@@ -191,6 +217,7 @@ def totalusuarios(request):
 
     return render(request,'aplicacion/totalusuarios.html', datos)
 
+@admin_required
 def usuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     datos = {
@@ -198,6 +225,7 @@ def usuarios(request, rut):
     }
     return render(request,'aplicacion/usuarios.html', datos)
 
+@admin_required
 def agregarUsuario(request):
     if request.method == 'POST':
         usuario_form = UsuarioForm(request.POST)
@@ -218,6 +246,7 @@ def agregarUsuario(request):
 
     return render(request, 'aplicacion/agregarusuario.html', data)
 
+@admin_required
 def eliminarUsuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -238,6 +267,7 @@ def eliminarUsuario(request, rut):
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
 
+@admin_required
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -256,6 +286,7 @@ def editarusuarios(request, rut):
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
 
+@admin_required
 def direccionesusuario(request,rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     direcciones = usuario.direcciones.all()
@@ -265,6 +296,7 @@ def direccionesusuario(request,rut):
     }
     return render(request, 'aplicacion/direccionesusuario.html',data)
 
+@admin_required
 def agregardireccion(request,rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     if request.method == 'POST':
@@ -283,7 +315,7 @@ def agregardireccion(request,rut):
 
     return render(request, 'aplicacion/agregardireccion.html', data)
 
-
+@admin_required
 def editardirecciones(request,id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -303,6 +335,7 @@ def editardirecciones(request,id):
     }
     return render(request, 'aplicacion/editardirecciones.html', data)
 
+@admin_required
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -311,6 +344,7 @@ def eliminardireccion(request, id):
     direccion.delete()
     return redirect('direccionesusuario', rut=usuario.rut)
 
+@login_required
 def carrito(request):
     carrito = request.session.get('carrito', {})
     zapatillas_en_carrito = []
@@ -334,6 +368,7 @@ def carrito(request):
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
+@login_required
 def agregarCarrito(request, id_zapatilla):
     if request.method == 'POST':
         talla = request.POST.get('talla_seleccionada')
@@ -370,7 +405,7 @@ def agregarCarrito(request, id_zapatilla):
         return redirect('carrito')
     return redirect('detalle_zapatilla', id_zapatilla=id_zapatilla)
 
-
+@login_required
 def eliminarCarrito(request, id_item):
     if 'carrito' in request.session:
         carrito = request.session['carrito']
@@ -381,6 +416,7 @@ def eliminarCarrito(request, id_item):
 
     return redirect('carrito')
 
+@login_required
 def confirmarCompra(request):
     carrito = request.session.get('carrito', {})
     if not carrito:
