@@ -3,6 +3,7 @@ from django import forms
 from .models import Usuario, Direccion, Zapatilla, StockZapatilla
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.forms import AuthenticationForm
 
 class DireccionForm(forms.ModelForm):
     class Meta:
@@ -13,6 +14,11 @@ class DireccionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['detalle'].required = False
 
+
+class AdminLoginForm(AuthenticationForm):
+    def confirm_login_allowed(self, user):
+        if not user.is_superuser:
+            raise forms.ValidationError("Solo los administradores pueden acceder a esta página.")
 
 
 class UsuarioForm(forms.ModelForm):

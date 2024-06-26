@@ -8,147 +8,70 @@
 {% block content %}
 <section>
     <div class="container">
-        <h1>Hola, Usuario</h1>
+        <h1>Hola, {{usuario.nombre}} </h1>
         <div class="row mt-4">
-            <div class="col-12 col-md-3 bg-light rounded">
+            <div class="row">
                 <!-- Menu lateral -->
-                <div class="sidebar p-4 ">
-                    <a href="{% url "perfil" %}">
-                        <div class="">Datos personales</div>
-                    </a>
-                    <hr class="my-4" />
-                    <a href="{% url "direcciones" %}">
-                            <div class="">Direcciones</div>
-                        </a>
-                        <hr class="my-4" />
-                        <a href="{% url "pedidos" %}">
-                            <div class="">Pedidos</div>
-                        </a>
+                <div class="col-12 col-md-3">
+                    <div class="sidebar bg-light rounded">
+                        <ul class="list-unstyled">
+                            <li class="p-3">
+                                <a href="{% url "perfil" usuario.rut %}">Datos personales</a>
+                            </li>
+                            <li class="p-3">
+                                <a href="{% url "direcciones" usuario.rut %}">Direcciones</a>
+                            </li>
+                            <li class="p-3">
+                                <a href="{% url "pedidos" usuario.rut %}">Pedidos</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 
                 <div class="col-12 col-md-8">
-                    <h2>Mis Pedidos</h2>
+                    <h4>Mis Pedidos</h4>
+                    {% for pedido in pedidos %}
                     <div class="order-card row mt-4 pb-3">
                         <div class="row p-3 rounded">
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                                <h5><strong>Pedido #{{ pedido.id }}</strong></h5>
+                            </div>
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                                <h5><strong>{{ pedido.get_estado_display }}</strong></h5>
+                            </div>
+                        </div>
+
+                        {% for zapatilla in pedido.zapatillas.all %}
                             <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                
-                                <h5><strong>Pedido #123456</strong></h5>
+                                <!-- Image -->
+                                <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
+                                    <img src="{{ zapatilla.foto.url }}" class="w-100" alt="{{ zapatilla.modelo }}" />
+                                    <a href="#!">
+                                        <div class="mask"></div>
+                                    </a>
+                                </div>
                             </div>
-                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                <h5><strong>En camino</strong></h5>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                            <!-- Image -->
-                            <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
-                                <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="w-100"
-                                alt="Blue Jeans Jacket" />
-                                <a href="#!">
-                                    <div class="mask"></div>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Data -->
-                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                            <p><strong>Nike Air Max Pulse</strong></p>
-                            <p>Color: Negro</p>
-                            <p>Talla: 40</p>
-                        </div>
-                        <!-- Data -->
 
-                        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                <!-- Data -->
+                                <p><strong>{{ zapatilla.modelo }}</strong></p>
+                                <p>Talla: {{ zapatilla.talla }}</p>
 
-                            <!-- Boton comprar de nuevo -->
-                            <p class="text-start text-md-center">
-                                <a href="{% url "producto" %}">    
-                                    <button class="btn btn-dark">Comprar de nuevo</button>
-                                </a>
-                            </p>
-                            <!-- Boton comprar de nuevo -->
-                        </div>
-                        
-                        <!-- Divisor -->
-                        <hr class="my-4" />
-                        
-                        <!-- Otro producto del mismo pedido -->
-                        
-                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                            <!-- Image -->
-                            <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
-                                <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="w-100"
-                                alt="Blue Jeans Jacket" />
-                                <a href="#!">
-                                    <div class="mask"></div>
-                                </a>
                             </div>
-                        </div>
-                        
-                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                            <!-- Data -->
-                            <p><strong>Nike Air Max Pulse</strong></p>
-                            <p>Color: Negro</p>
-                            <p>Talla: 40</p>
-                            <!-- Data -->
-                        </div>
-                        
-                        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                            <!-- Boton comprar de nuevo -->
-                            <p class="text-start text-md-center">
-                                <a href="{% url "producto" %}">    
-                                    <button class="btn btn-dark">Comprar de nuevo</button>
-                                </a>
-                            </p>
-                            <!-- Boton comprar de nuevoado -->
-                        </div>
 
+                            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                <!-- Boton comprar de nuevo -->
+                                <p class="text-start text-md-center">
+                                    <a href="{% url 'producto' zapatilla.id %}">
+                                        <button class="btn btn-dark">Comprar de nuevo</button>
+                                    </a>
+                                </p>
+                            </div>
+                            <!-- Divisor -->
+                            <hr class="" />
+                        {% endfor %}
                     </div>
-
-                    <!-- Otro pedido -->
-                    
-                    <div class="order-card row mt-4 pb-3">
-                        <div class="row p-3 rounded">
-                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                
-                                <h5><strong>Pedido #123456</strong></h5>
-                            </div>
-                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                <h5><strong>En camino</strong></h5>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                            <!-- Image -->
-                            <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
-                                <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="w-100"
-                                alt="Blue Jeans Jacket" />
-                                <a href="#!">
-                                    <div class="mask"></div>
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Data -->
-                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                            <p><strong>Nike Air Max Pulse</strong></p>
-                            <p>Color: Negro</p>
-                            <p>Talla: 40</p>
-                        </div>
-                        <!-- Data -->
-                        
-                        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-
-                            <!-- Boton comprar de nuevo -->
-                            <p class="text-start text-md-center">
-                                <a href="{% url "producto" %}">    
-                                    <button class="btn btn-dark">Comprar de nuevo</button>
-                                </a>
-                            </p>
-                            <!-- Boton comprar de nuevo -->
-                        </div>
-                        
-                    </div>
-                    
+                    {% endfor %}
                 </div>
             </div>
         </div>

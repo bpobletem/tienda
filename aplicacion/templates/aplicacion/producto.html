@@ -134,7 +134,7 @@
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="card-wrapper container-sm d-flex justify-content-around">
                 {% endif %}
-                            <a href="producto/{{ producto.id }}/">
+                            <a href="{% url "producto" producto.id %}">
                                 <div class="card" style="width: 14rem;">
                                     <img src="{{ producto.foto.url }}" class="card-img-top" alt="{{ producto.modelo }}">
                                     <div class="card-body">
@@ -164,7 +164,7 @@
 
 <script src="{% static 'aplicacion/js/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'aplicacion/js/consumirapi.js' %}"></script>
-<script src="{% static 'aplicacion/js/vcarrito.js' %}"></script>
+<script src="{% static 'aplicacion/js/producto.js' %}"></script>
 
 
 {% endblock content %}

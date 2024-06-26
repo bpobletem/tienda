@@ -3,10 +3,19 @@ from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
 Usuario, Pedido, Carrito, ItemCarrito, Direccion)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm
+from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm, AdminLoginForm
 from django.core.paginator import Paginator
 from django.http import Http404
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import user_passes_test, login_required
 
+def admin_required(view_func):
+    actual_decorator = user_passes_test(
+        lambda u: u.is_active and u.is_superuser,
+        login_url='loginAdmin',  # URL de la vista de login de administradores
+        redirect_field_name=None
+    )
+    return actual_decorator(view_func)
 
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos
@@ -31,7 +40,7 @@ def producto(request, id):
     }
     return render(request, 'aplicacion/producto.html', datos)
 
-
+@admin_required
 def administrador(request):
     zapatillas = Zapatilla.objects.order_by('modelo')
     page = request.GET.get('page', 1)
@@ -47,6 +56,7 @@ def administrador(request):
     
     return render(request,'aplicacion/admin.html',datos)
 
+@admin_required
 def detalleproducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     tallas_disponibles = StockZapatilla.objects.filter(zapatilla=zapatilla)
@@ -57,10 +67,11 @@ def detalleproducto(request, id):
 
     return render(request, 'aplicacion/detalleproducto.html', datos)
 
-
+@admin_required
 def adminpedido(request):
     return render(request,'aplicacion/adminpedido.html')
 
+@admin_required
 def anadir(request):
     if request.method == 'POST':
         zapatilla_form = ZapatillaForm(request.POST, request.FILES)
@@ -118,25 +129,116 @@ def categoria(request,id):
     
     return render(request,'aplicacion/categoria.html', datos)
 
-def direcciones(request):
-    return render(request,'aplicacion/direcciones.html')
+@login_required
+def direcciones(request,rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    direcciones = usuario.direcciones.all()
+    data = {
+        'usuario': usuario,
+        'direcciones': direcciones,
+    }
+    return render(request,'aplicacion/direcciones.html', data)
+
+@login_required
+def agregardireccionusuario(request,rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    if request.method == 'POST':
+        form = DireccionForm(request.POST)
+        if form.is_valid():
+            direccion = form.save()
+            usuario.direcciones.add(direccion)
+            return redirect('direcciones', rut=usuario.rut)
+    else:
+        form = DireccionForm()
+
+    data = {
+        'form': form,
+        'usuario': usuario
+    }
+
+    return render(request, 'aplicacion/agregardireccionusuario.html', data)
+
+@login_required
+def editardireccionusuario(request, id):
+    direccion = get_object_or_404(Direccion, id=id)
+    usuario = direccion.usuario_set.first()
+
+    if request.method == 'POST':
+        form = DireccionForm(request.POST, instance=direccion)
+        if form.is_valid():
+            form.save()
+            return redirect('direccionesusuario', rut=usuario.rut)
+    else:
+        form = DireccionForm(instance=direccion)
+
+    data = {
+        'direccion':direccion,
+        'usuario': usuario,
+        'form': form,
+    }
+    return render(request, 'aplicacion/editardireccionusuario.html', data)
+
+@login_required
+def eliminardireccionusuario(request,id):
+    direccion = get_object_or_404(Direccion, id=id)
+    usuario = direccion.usuario_set.first()
+    if usuario:
+        usuario.direcciones.remove(direccion)
+    direccion.delete()
+    return redirect('direcciones', rut=usuario.rut)
+
 
 def editar(request,id): #editarproducto
     return render(request,'aplicacion/editar.html')
-
-
 
 # def login(request):
 #     return render(request,'aplicacion/registration/login.html')
 
 def loginAdmin(request):
-     return render(request,'aplicacion/loginAdmin.html')
+    if request.method == 'POST':
+        form = AdminLoginForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('admin')  # Redirigir a la página de administrador después del login
+    else:
+        form = AdminLoginForm()
 
-def pedidos(request):
-    return render(request,'aplicacion/pedidos.html')
+    data = {
+        'form' : form
+    }
 
-def perfil(request):
-    return render(request,'aplicacion/perfil.html')
+    return render(request, 'aplicacion/loginAdmin.html', data)
+
+def pedidos(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    pedidos = Pedido.objects.filter(cliente=usuario)
+    data = {
+        'usuario':usuario,
+        'pedidos':pedidos
+    }
+    return render(request,'aplicacion/pedidos.html', data)
+
+@login_required
+def perfil(request, rut):
+    usuario = get_object_or_404(Usuario, rut=rut)
+    if request.method == 'POST':
+        form = UpdateUsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect(to="totalusuarios")
+
+    else:
+        form = UpdateUsuarioForm(instance=usuario)
+
+    data = {
+        'form': form,
+        'usuario' : usuario
+    }
+    return render(request,'aplicacion/perfil.html', data)
 
 def recuperar(request):
     return render(request,'aplicacion/recuperar.html')
@@ -161,6 +263,7 @@ def registro(request):
 
     return render(request, 'registration/registro.html', data)
 
+@admin_required
 def totalpedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
     page = request.GET.get('page', 1)
@@ -176,6 +279,7 @@ def totalpedidos(request):
     
     return render(request,'aplicacion/totalpedidos.html', datos)
 
+@admin_required
 def totalusuarios(request):
     usuarios = Usuario.objects.order_by('-rut')
     page = request.GET.get('page',1)
@@ -191,6 +295,7 @@ def totalusuarios(request):
 
     return render(request,'aplicacion/totalusuarios.html', datos)
 
+@admin_required
 def usuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     datos = {
@@ -198,6 +303,7 @@ def usuarios(request, rut):
     }
     return render(request,'aplicacion/usuarios.html', datos)
 
+@admin_required
 def agregarUsuario(request):
     if request.method == 'POST':
         usuario_form = UsuarioForm(request.POST)
@@ -218,6 +324,7 @@ def agregarUsuario(request):
 
     return render(request, 'aplicacion/agregarusuario.html', data)
 
+@admin_required
 def eliminarUsuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -238,6 +345,7 @@ def eliminarUsuario(request, rut):
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
 
+@admin_required
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -256,6 +364,7 @@ def editarusuarios(request, rut):
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
 
+@admin_required
 def direccionesusuario(request,rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     direcciones = usuario.direcciones.all()
@@ -265,6 +374,7 @@ def direccionesusuario(request,rut):
     }
     return render(request, 'aplicacion/direccionesusuario.html',data)
 
+@admin_required
 def agregardireccion(request,rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     if request.method == 'POST':
@@ -283,7 +393,7 @@ def agregardireccion(request,rut):
 
     return render(request, 'aplicacion/agregardireccion.html', data)
 
-
+@admin_required
 def editardirecciones(request,id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -303,6 +413,7 @@ def editardirecciones(request,id):
     }
     return render(request, 'aplicacion/editardirecciones.html', data)
 
+@admin_required
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -311,6 +422,7 @@ def eliminardireccion(request, id):
     direccion.delete()
     return redirect('direccionesusuario', rut=usuario.rut)
 
+@login_required
 def carrito(request):
     carrito = request.session.get('carrito', {})
     zapatillas_en_carrito = []
@@ -334,6 +446,7 @@ def carrito(request):
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
+@login_required
 def agregarCarrito(request, id_zapatilla):
     if request.method == 'POST':
         talla = request.POST.get('talla_seleccionada')
@@ -344,6 +457,7 @@ def agregarCarrito(request, id_zapatilla):
             return redirect('detalle_zapatilla', id_zapatilla=zapatilla.id)
 
         talla = talla.replace(',', '.')
+
         # Obtener el stock para la zapatilla y la talla específica
         try:
             stock = StockZapatilla.objects.get(zapatilla=zapatilla, talla=float(talla))
@@ -352,11 +466,14 @@ def agregarCarrito(request, id_zapatilla):
 
         carrito = request.session.get('carrito', {})
 
-        # Agregar la zapatilla al carrito
-        if str(id_zapatilla) in carrito:
-            carrito[str(id_zapatilla)]['cantidad'] += 1
+        # Construir el identificador único para la zapatilla y la talla
+        carrito_item_id = f"{id_zapatilla}_{talla}"
+
+        # Verificar si el artículo ya está en el carrito
+        if carrito_item_id in carrito:
+            carrito[carrito_item_id]['cantidad'] += 1
         else:
-            carrito[str(id_zapatilla)] = {
+            carrito[carrito_item_id] = {
                 'id': zapatilla.id,
                 'modelo': zapatilla.modelo,
                 'precio': zapatilla.precio,
@@ -367,20 +484,25 @@ def agregarCarrito(request, id_zapatilla):
         # Actualizar la sesión del carrito
         request.session['carrito'] = carrito
         request.session.modified = True
+
         return redirect('carrito')
+
     return redirect('detalle_zapatilla', id_zapatilla=id_zapatilla)
 
-
-def eliminarCarrito(request, id_item):
-    if 'carrito' in request.session:
-        carrito = request.session['carrito']
-        if str(id_item) in carrito:
-            del carrito[str(id_item)]
+@login_required
+def eliminarCarrito(request, carrito_item_id):
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+        
+        # Verifica si el carrito_item_id está en el carrito
+        if carrito_item_id in carrito:
+            del carrito[carrito_item_id]
             request.session['carrito'] = carrito
             request.session.modified = True
 
     return redirect('carrito')
 
+@login_required
 def confirmarCompra(request):
     carrito = request.session.get('carrito', {})
     if not carrito:
