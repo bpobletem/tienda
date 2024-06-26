@@ -254,7 +254,7 @@ def perfil(request, rut):
         form = UpdateUsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
             form.save()
-            return redirect(to="totalusuarios")
+            return redirect(to="perfil", rut=usuario.rut)
 
     else:
         form = UpdateUsuarioForm(instance=usuario)

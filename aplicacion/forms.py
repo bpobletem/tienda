@@ -30,7 +30,7 @@ class AdminLoginForm(AuthenticationForm):
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
-    fnac = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    fnac = forms.DateInput(format=('%Y-%m-%d'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
 
     class Meta:
         model = Usuario
@@ -54,7 +54,7 @@ class UsuarioForm(forms.ModelForm):
         return user
     
 class UpdateUsuarioForm(forms.ModelForm):
-    fnac = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
     class Meta:
         model = Usuario
         fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
