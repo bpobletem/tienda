@@ -1,28 +1,33 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import (Zapatilla, Categoria, Marca, StockZapatilla, 
-Usuario, Pedido, Carrito, ItemCarrito, Direccion)
+from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
+                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion, )
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm
+from .forms import (UsuarioForm, DireccionForm, ZapatillaForm,
+                    StockZapatillaForm, UpdateUsuarioForm, PedidoForm, PedidoZapatillaFormSet)
 from django.core.paginator import Paginator
 from django.http import Http404
 
 
 def index(request):
-    productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos
+    productos_nuevos = Zapatilla.objects.all().order_by(
+        '-id')[:9]  # ultimos 9 productos
     nike_marca = Marca.objects.get(nombre="Nike")
-    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('id')[:9]  #ultimos 9 productos NIKE
-    
+    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('id')[
+        :9]  # ultimos 9 productos NIKE
+
     data = {
         'productos_nuevos': productos_nuevos,
         'productos_nike': productos_nike
     }
     return render(request, 'aplicacion/index.html', data)
 
+
 def producto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     tallas_disponibles = StockZapatilla.objects.filter(zapatilla=zapatilla)
-    productos_relacionados = Zapatilla.objects.filter(categoria__in=zapatilla.categoria.all()).exclude(id=id).distinct()
+    productos_relacionados = Zapatilla.objects.filter(
+        categoria__in=zapatilla.categoria.all()).exclude(id=id).distinct()
 
     datos = {
         'zapatilla': zapatilla,
@@ -37,15 +42,16 @@ def administrador(request):
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,5) #Muestra 5 productos por pagina
+        paginator = Paginator(zapatillas, 5)  # Muestra 5 productos por pagina
         zapatillas = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': zapatillas, #ENTITY ES NECESARIO PARA EL PAGINADOR
-            'paginator': paginator}
-    
-    return render(request,'aplicacion/admin.html',datos)
+
+    datos = {'entity': zapatillas,  # ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request, 'aplicacion/admin.html', datos)
+
 
 def detalleproducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
@@ -59,7 +65,56 @@ def detalleproducto(request, id):
 
 
 def adminpedido(request):
-    return render(request,'aplicacion/adminpedido.html')
+    return render(request, 'aplicacion/adminpedido.html')
+
+
+def listaPedidos(request):
+    pedidos = Pedido.objects.all()
+    return render(request, 'aplicacion/listaPedidos.html', {'pedidos': pedidos})
+
+
+def crearPedido(request):
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        formset = PedidoZapatillaFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            pedido = form.save()
+            formset.instance = pedido
+            formset.save()
+            return redirect('listaPedidos')
+    else:
+        form = PedidoForm()
+        formset = PedidoZapatillaFormSet()
+    return render(request, 'aplicacion/crearPedido.html', {'form': form, 'formset': formset})
+
+
+def editarPedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if request.method == 'POST':
+        form = PedidoForm(request.POST, instance=pedido)
+        formset = PedidoZapatillaFormSet(request.POST, instance=pedido)
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            return redirect('listaPedidos')
+    else:
+        form = PedidoForm(instance=pedido)
+        formset = PedidoZapatillaFormSet(instance=pedido)
+    return render(request, 'aplicacion/editarPedido.html', {'form': form, 'formset': formset})
+
+
+def eliminarPedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if request.method == 'POST':
+        pedido.delete()
+        return redirect('listaPedidos')
+    return render(request, 'aplicacion/eliminarPedido.html', {'pedido': pedido})
+
+
+def detallePedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    return render(request, 'aplicacion/detallePedido.html', {'pedido': pedido})
+
 
 def anadir(request):
     if request.method == 'POST':
@@ -74,12 +129,13 @@ def anadir(request):
     else:
         zapatilla_form = ZapatillaForm()
         stock_form = StockZapatillaForm()
-    
+
     datos = {
         'zapatilla_form': zapatilla_form,
         'stock_form': stock_form
     }
     return render(request, 'aplicacion/anadir.html', datos)
+
 
 def marca(request, id):
     marca = get_object_or_404(Marca, id=id)
@@ -87,59 +143,66 @@ def marca(request, id):
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,10)
+        paginator = Paginator(zapatillas, 10)
         zapatillas = paginator.page(page)
     except:
         raise Http404
 
-    datos = {'entity': zapatillas, 
+    datos = {'entity': zapatillas,
              'filtro': marca.nombre,
              'paginator': paginator,
              'marca': marca
              }
     return render(request, 'aplicacion/marca.html', datos)
 
-def categoria(request,id):
+
+def categoria(request, id):
     categoria = get_object_or_404(Categoria, id=id)
-    zapatillas = Zapatilla.objects.filter(categoria=categoria).order_by('modelo')
+    zapatillas = Zapatilla.objects.filter(
+        categoria=categoria).order_by('modelo')
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(zapatillas,10)
+        paginator = Paginator(zapatillas, 10)
         zapatillas = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': zapatillas, 
+
+    datos = {'entity': zapatillas,
              'filtro': categoria.nombre,
              'paginator': paginator,
-             'categoria' : categoria
+             'categoria': categoria
              }
-    
-    return render(request,'aplicacion/categoria.html', datos)
+
+    return render(request, 'aplicacion/categoria.html', datos)
+
 
 def direcciones(request):
-    return render(request,'aplicacion/direcciones.html')
+    return render(request, 'aplicacion/direcciones.html')
 
-def editar(request,id): #editarproducto
-    return render(request,'aplicacion/editar.html')
 
+def editar(request, id):  # editarproducto
+    return render(request, 'aplicacion/editar.html')
 
 
 # def login(request):
 #     return render(request,'aplicacion/registration/login.html')
 
 def loginAdmin(request):
-     return render(request,'aplicacion/loginAdmin.html')
+    return render(request, 'aplicacion/loginAdmin.html')
+
 
 def pedidos(request):
-    return render(request,'aplicacion/pedidos.html')
+    return render(request, 'aplicacion/pedidos.html')
+
 
 def perfil(request):
-    return render(request,'aplicacion/perfil.html')
+    return render(request, 'aplicacion/perfil.html')
+
 
 def recuperar(request):
-    return render(request,'aplicacion/recuperar.html')
+    return render(request, 'aplicacion/recuperar.html')
+
 
 def registro(request):
     if request.method == 'POST':
@@ -161,42 +224,46 @@ def registro(request):
 
     return render(request, 'registration/registro.html', data)
 
+
 def totalpedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
     page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(pedidos,5)
+        paginator = Paginator(pedidos, 5)
         pedidos = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity' : pedidos, #ENTITY ES NECESARIO PARA EL PAGINADOR
-            'paginator': paginator}
-    
-    return render(request,'aplicacion/totalpedidos.html', datos)
+
+    datos = {'entity': pedidos,  # ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request, 'aplicacion/totalpedidos.html', datos)
+
 
 def totalusuarios(request):
     usuarios = Usuario.objects.order_by('-rut')
-    page = request.GET.get('page',1)
+    page = request.GET.get('page', 1)
 
     try:
-        paginator = Paginator(usuarios,5)
+        paginator = Paginator(usuarios, 5)
         usuarios = paginator.page(page)
     except:
         raise Http404
-    
-    datos = {'entity': usuarios, #ENTITY ES NECESARIO PARA EL PAGINADOR
+
+    datos = {'entity': usuarios,  # ENTITY ES NECESARIO PARA EL PAGINADOR
              'paginator': paginator}
 
-    return render(request,'aplicacion/totalusuarios.html', datos)
+    return render(request, 'aplicacion/totalusuarios.html', datos)
+
 
 def usuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     datos = {
         'usuario': usuario,
     }
-    return render(request,'aplicacion/usuarios.html', datos)
+    return render(request, 'aplicacion/usuarios.html', datos)
+
 
 def agregarUsuario(request):
     if request.method == 'POST':
@@ -218,6 +285,7 @@ def agregarUsuario(request):
 
     return render(request, 'aplicacion/agregarusuario.html', data)
 
+
 def eliminarUsuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -238,6 +306,7 @@ def eliminarUsuario(request, rut):
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
 
+
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -252,20 +321,22 @@ def editarusuarios(request, rut):
 
     data = {
         'form': form,
-        'usuario' : usuario
+        'usuario': usuario
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
 
-def direccionesusuario(request,rut):
+
+def direccionesusuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     direcciones = usuario.direcciones.all()
     data = {
         'usuario': usuario,
         'direcciones': direcciones,
     }
-    return render(request, 'aplicacion/direccionesusuario.html',data)
+    return render(request, 'aplicacion/direccionesusuario.html', data)
 
-def agregardireccion(request,rut):
+
+def agregardireccion(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     if request.method == 'POST':
         form = DireccionForm(request.POST)
@@ -284,7 +355,7 @@ def agregardireccion(request,rut):
     return render(request, 'aplicacion/agregardireccion.html', data)
 
 
-def editardirecciones(request,id):
+def editardirecciones(request, id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
 
@@ -297,11 +368,12 @@ def editardirecciones(request,id):
         form = DireccionForm(instance=direccion)
 
     data = {
-        'direccion':direccion,
+        'direccion': direccion,
         'usuario': usuario,
         'form': form,
     }
     return render(request, 'aplicacion/editardirecciones.html', data)
+
 
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
@@ -310,6 +382,7 @@ def eliminardireccion(request, id):
         usuario.direcciones.remove(direccion)
     direccion.delete()
     return redirect('direccionesusuario', rut=usuario.rut)
+
 
 def carrito(request):
     carrito = request.session.get('carrito', {})
@@ -334,6 +407,7 @@ def carrito(request):
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
+
 def agregarCarrito(request, id_zapatilla):
     if request.method == 'POST':
         talla = request.POST.get('talla_seleccionada')
@@ -346,9 +420,11 @@ def agregarCarrito(request, id_zapatilla):
         talla = talla.replace(',', '.')
         # Obtener el stock para la zapatilla y la talla específica
         try:
-            stock = StockZapatilla.objects.get(zapatilla=zapatilla, talla=float(talla))
+            stock = StockZapatilla.objects.get(
+                zapatilla=zapatilla, talla=float(talla))
         except StockZapatilla.DoesNotExist:
-            return redirect('carrito')  # Manejo de error, redirigir o mostrar mensaje
+            # Manejo de error, redirigir o mostrar mensaje
+            return redirect('carrito')
 
         carrito = request.session.get('carrito', {})
 
@@ -381,6 +457,7 @@ def eliminarCarrito(request, id_item):
 
     return redirect('carrito')
 
+
 def confirmarCompra(request):
     carrito = request.session.get('carrito', {})
     if not carrito:
@@ -388,7 +465,8 @@ def confirmarCompra(request):
 
     for item_id, item_info in carrito.items():
         zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
-        stock = get_object_or_404(StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
+        stock = get_object_or_404(
+            StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
 
         if stock.cantidad >= item_info['cantidad']:
             stock.cantidad -= item_info['cantidad']

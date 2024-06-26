@@ -1,23 +1,24 @@
 # forms.py
 from django import forms
-from .models import Usuario, Direccion, Zapatilla, StockZapatilla
+from .models import Usuario, Direccion, Zapatilla, StockZapatilla, Pedido, PedidoZapatilla
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+
 
 class DireccionForm(forms.ModelForm):
     class Meta:
         model = Direccion
         fields = ['calle', 'numero', 'detalle', 'comuna', 'region']
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['detalle'].required = False
 
 
-
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label='Confirmar contraseña', widget=forms.PasswordInput)
     fnac = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:
@@ -40,23 +41,28 @@ class UsuarioForm(forms.ModelForm):
         if commit:
             user.save()
         return user
-    
+
+
 class UpdateUsuarioForm(forms.ModelForm):
     fnac = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
     class Meta:
         model = Usuario
         fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
-    
+
+
 class ZapatillaForm(forms.ModelForm):
     class Meta:
         model = Zapatilla
-        fields = ['marca', 'modelo', 'precio', 'categoria', 'descripcion', 'foto']
+        fields = ['marca', 'modelo', 'precio',
+                  'categoria', 'descripcion', 'foto']
 
     def __init__(self, *args, **kwargs):
         super(ZapatillaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Agregar Zapatilla'))
+
 
 class StockZapatillaForm(forms.ModelForm):
     class Meta:
@@ -68,3 +74,19 @@ class StockZapatillaForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Agregar Stock'))
+
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['cliente', 'direccion', 'estado']
+
+
+class PedidoZapatillaForm(forms.ModelForm):
+    class Meta:
+        model = PedidoZapatilla
+        fields = ['zapatilla',  'cantidad']
+
+
+PedidoZapatillaFormSet = forms.inlineformset_factory(
+    Pedido, PedidoZapatilla, form=PedidoZapatillaForm, extra=1)
