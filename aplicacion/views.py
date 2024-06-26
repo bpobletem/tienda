@@ -204,11 +204,14 @@ def loginAdmin(request):
             if user is not None:
                 login(request, user)
                 return redirect('admin')  # Redirigir a la página de administrador después del login
-
     else:
         form = AdminLoginForm()
 
-    return render(request, 'aplicacion/loginAdmin.html', {'form': form})
+    data = {
+        'form' : form
+    }
+
+    return render(request, 'aplicacion/loginAdmin.html', data)
 
 def pedidos(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
