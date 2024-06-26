@@ -5,6 +5,12 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.forms import AuthenticationForm
 
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField(label='Buscar', max_length=100)
+
+
 class DireccionForm(forms.ModelForm):
     class Meta:
         model = Direccion

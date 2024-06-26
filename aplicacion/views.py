@@ -3,11 +3,12 @@ from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
 Usuario, Pedido, Carrito, ItemCarrito, Direccion)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm, AdminLoginForm
+from .forms import UsuarioForm, DireccionForm, ZapatillaForm, StockZapatillaForm, UpdateUsuarioForm, AdminLoginForm, SearchForm
 from django.core.paginator import Paginator
 from django.http import Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.db.models import Q
 
 def admin_required(view_func):
     actual_decorator = user_passes_test(
@@ -16,6 +17,30 @@ def admin_required(view_func):
         redirect_field_name=None
     )
     return actual_decorator(view_func)
+
+def search_results(request):
+    query = request.GET.get('query')
+    results = []
+    page = request.GET.get('page', 1)
+
+
+    if query:
+        results = Zapatilla.objects.filter(
+                Q(modelo__icontains=query) |  Q(marca__nombre__icontains=query)
+            )
+
+        try:
+            paginator = Paginator(results,5)
+            results = paginator.page(page)
+        except:
+            raise Http404
+    
+    data = {
+        'paginator': paginator,
+        'entity' : results,
+        'query' : query
+    }
+    return render(request, 'aplicacion/searchproduct.html', data)
 
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by('-id')[:9]  #ultimos 9 productos

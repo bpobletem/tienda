@@ -4,13 +4,15 @@ from .views import (index, producto,administrador, detalleproducto, loginAdmin,
                     perfil,recuperar,registro,totalpedidos,totalusuarios,usuarios,carrito,marca, 
                     agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario,
                     direccionesusuario, eliminardireccion, editardirecciones, agregardireccion,
-                    agregardireccionusuario, editardireccionusuario, eliminardireccionusuario
+                    agregardireccionusuario, editardireccionusuario, eliminardireccionusuario,
+                    search_results
 )
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('', index, name='index'),
+    path('buscar/', search_results, name='search_results'),
     path('producto/<int:id>/', producto, name='producto'),
     path('administrador/', administrador, name='admin'),
     path('detalleproducto/<int:id>', detalleproducto, name='detalleproducto'),
