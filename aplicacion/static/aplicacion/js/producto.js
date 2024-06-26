@@ -23,3 +23,4 @@ tallaButtons.forEach(button => {
         agregarCarritoBtn.disabled = false;
     });
 });
+
