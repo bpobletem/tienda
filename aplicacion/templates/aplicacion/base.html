@@ -19,11 +19,12 @@
     <!-- Mini navbar -->
     <div class="extra-nav">
         <div class="container d-flex justify-content-end">
-            <a href="{% url "pedidos" %}" class="me-3">Seguimiento de pedidos</a>
             {% if user.is_authenticated %}
-            {% else %}
-            <span class="me-3">/</span>
-            <a href="{% url "registro" %}">Registrate</a>
+                <a href="{% url "pedidos" user.rut %}" class="me-3">Seguimiento de pedidos</a>
+                {% else %}
+                <a href="{% url "registro" %}">Registrate</a>
+                <span class="ms-3">/</span>
+                <a class="ms-3" href="{% url "login" %}">Inicia sesion</a>
             {% endif %}
         </div>
     </div>
@@ -68,26 +69,27 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url "admin" %}">Panel Admin</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url "loginAdmin" %}">Login Admin</a>
-                    </li>
                 </ul>
 
-                <ul class="navbar-nav ms-auto me-4 mb-2 mb-lg-0">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item d-flex mx-auto">
-                        <input class="form-control me-2 ms-4" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <form class="d-flex" method="get" action="{% url 'search_results' %}">
+                            <input class="form-control mr-sm-2" type="search" placeholder="Buscar zapatillas" aria-label="Buscar" name="query">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
+                        </form>
                     </li>
                 </ul>
 
 
                 <ul class="navbar-nav me-5 mb-2 mb-lg-0 d-flex flex-row align-items-center gap-3">
-
-                    <li class="nav-item shopping-cart">
-                        <a href="{% url "carrito" %}">
-                            <i class="fa-solid fa-cart-shopping text-body-secondary"></i>
-                        </a>
-                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item shopping-cart">
+                            <a href="{% url "carrito" %}">
+                                <i class="fa-solid fa-cart-shopping text-body-secondary"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                    {% endif %}
 
                     <li class="nav-item dropstart profile">
                         <a href="#" class="nav-link dropdown-toggle " role="button" data-bs-toggle="dropdown">
@@ -95,8 +97,8 @@
                         </a>
                         <ul class="dropdown-menu">
                             {% if user.is_authenticated %}
-                            <li class="dropdown-item">Hola {{ user.username }}!</li>
-                            <li><a class="dropdown-item" href="{% url "perfil" %}">Perfil</a></li>
+                            <li class="dropdown-item">Hola {{ user.nombre }}!</li>
+                            <li><a class="dropdown-item" href="{% url "perfil" user.rut %}">Perfil</a></li>
                             <li>
                                 <form  action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}

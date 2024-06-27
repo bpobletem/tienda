@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
 # Create your models here.
@@ -17,15 +18,46 @@ class Direccion(models.Model):
         return f"{self.calle} {self.numero}, {self.detalle}, {self.comuna}, {self.region}"
 
 
-class Usuario(models.Model):
-    rut = models.CharField(max_length=10, primary_key=True)
-    nombre = models.CharField(max_length=50, null=False)
-    apellido = models.CharField(max_length=50, null=False)
-    contrasenia = models.CharField(max_length=50, null=False)
-    correo = models.EmailField(unique=True, max_length=254, null=False)
-    fnac = models.DateField(verbose_name="Fecha de Nacimiento", null=False)
-    direcciones = models.ManyToManyField(Direccion)
-    telefono = models.IntegerField(null=False)
+class UsuarioManager(BaseUserManager):
+    def create_user(self, correo, nombre, apellido, password=None, rut=None, **extra_fields):
+        if not correo:
+            raise ValueError('El correo electrónico es obligatorio')
+        if not rut:
+            raise ValueError('El RUT es obligatorio')
+        correo = self.normalize_email(correo)
+        user = self.model(correo=correo, nombre=nombre, apellido=apellido, rut=rut, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, correo, nombre, apellido, rut, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('telefono', '0000000000')
+        extra_fields.setdefault('fnac', '1900-01-01')  
+
+        return self.create_user(correo, nombre, apellido, password, rut, **extra_fields)
+
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
+    rut = models.CharField(max_length=10, unique=True)
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    correo = models.EmailField(unique=True, max_length=254)
+    fnac = models.DateField(verbose_name="Fecha de Nacimiento", default='1950-01-01')
+    direcciones = models.ManyToManyField('Direccion', blank=True)
+    telefono = models.CharField(max_length=15, default='0000000000') 
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UsuarioManager()
+
+    USERNAME_FIELD = 'correo'
+    REQUIRED_FIELDS = ['nombre', 'apellido', 'rut'] 
+
+    class Meta:
+        db_table = 'auth_user'
 
     def __str__(self):
         return f"{self.rut} -- {self.nombre} {self.apellido}"
