@@ -4,7 +4,7 @@ from .views import (index, producto, administrador, detalleproducto, loginAdmin,
                     perfil, recuperar, registro, totalpedidos, totalusuarios, usuarios, carrito, marca,
                     agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario,
                     direccionesusuario, eliminardireccion, editardirecciones, agregardireccion, listaPedidos,
-                    crearPedido, editarPedido, eliminarPedido, detallePedido,,
+                    crearPedido, editarPedido, eliminarPedido, detallePedido,
                     agregardireccionusuario, editardireccionusuario, eliminardireccionusuario,
                     search_results
                     )
@@ -30,8 +30,7 @@ urlpatterns = [
     path('editarusuarios/<str:rut>', editarusuarios, name='editarusuarios'),
     path('agregarusuario/', agregarUsuario, name="agregarUsuario"),
     path('eliminarusuario/<str:rut>', eliminarUsuario, name="eliminarUsuario"),
-    path('direccionesusuario/<str:rut>',
-         direccionesusuario, name="direccionesusuario"),
+    path('direccionesusuario/<str:rut>',direccionesusuario, name="direccionesusuario"),
     path('agregardireccion/<str:rut>', agregardireccion, name="agregardireccion"),
     path('eliminardireccion/<int:id>', eliminardireccion, name="eliminardireccion"),
     path('editardirecciones/<int:id>', editardirecciones, name="editardirecciones"),
