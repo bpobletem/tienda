@@ -325,6 +325,7 @@ def perfil(request, rut):
         form = UpdateUsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Perfil editado con exito')
             return redirect(to="perfil", rut=usuario.rut)
 
     else:
