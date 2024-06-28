@@ -1,8 +1,6 @@
 # forms.py
 from django import forms
 from .models import Usuario, Direccion, Zapatilla, StockZapatilla, Pedido, PedidoZapatilla
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
 from django.contrib.auth.forms import AuthenticationForm
 
 
