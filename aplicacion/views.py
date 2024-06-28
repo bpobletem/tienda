@@ -10,6 +10,7 @@ from django.http import Http404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Q
+from django.contrib import messages
 
 def admin_required(view_func):
     actual_decorator = user_passes_test(
@@ -231,6 +232,7 @@ def agregardireccionusuario(request,rut):
         if form.is_valid():
             direccion = form.save()
             usuario.direcciones.add(direccion)
+            messages.success(request, 'Direccion agregada con exito')
             return redirect('direcciones', rut=usuario.rut)
     else:
         form = DireccionForm()
@@ -251,6 +253,7 @@ def editardireccionusuario(request, id):
         form = DireccionForm(request.POST, instance=direccion)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Direccion editada con exito')
             return redirect('direccionesusuario', rut=usuario.rut)
     else:
         form = DireccionForm(instance=direccion)
@@ -269,6 +272,7 @@ def eliminardireccionusuario(request,id):
     if usuario:
         usuario.direcciones.remove(direccion)
     direccion.delete()
+    messages.success(request, 'Direccion eliminada con exito')
     return redirect('direcciones', rut=usuario.rut)
 
 
@@ -405,6 +409,7 @@ def agregarUsuario(request):
             usuario = usuario_form.save()
             direccion = direccion_form.save()
             usuario.direcciones.add(direccion)
+            messages.success(request, 'Usuario agregado con exito')
             return redirect('totalusuarios')
     else:
         usuario_form = UsuarioForm()
@@ -431,7 +436,7 @@ def eliminarUsuario(request, rut):
 
         # Eliminar el usuario
         usuario.delete()
-
+        messages.success(request, 'Usuario eliminado con exito')
         return redirect('totalusuarios')
 
     # Si no es un POST request, renderizar la página de confirmación de eliminación
@@ -444,6 +449,7 @@ def editarusuarios(request, rut):
         form = UpdateUsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Usuario editado con exito')
             return redirect(to="totalusuarios")
 
     else:
@@ -472,6 +478,7 @@ def agregardireccion(request,rut):
         if form.is_valid():
             direccion = form.save()
             usuario.direcciones.add(direccion)
+            messages.success(request, 'Direccion agregada con exito')
             return redirect('direccionesusuario', rut=usuario.rut)
     else:
         form = DireccionForm()
@@ -492,6 +499,7 @@ def editardirecciones(request,id):
         form = DireccionForm(request.POST, instance=direccion)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Direccion editada con exito')
             return redirect('direccionesusuario', rut=usuario.rut)
     else:
         form = DireccionForm(instance=direccion)
@@ -509,6 +517,7 @@ def eliminardireccion(request, id):
     if usuario:
         usuario.direcciones.remove(direccion)
     direccion.delete()
+    messages.success(request, 'Direccion eliminada con exito')
     return redirect('direccionesusuario', rut=usuario.rut)
 
 def carrito(request):
@@ -573,7 +582,7 @@ def agregarCarrito(request, id_zapatilla):
         # Actualizar la sesión del carrito
         request.session['carrito'] = carrito
         request.session.modified = True
-
+        messages.success(request, 'Item agregado al carrito con exito')
         return redirect('carrito')
 
     return redirect('detalle_zapatilla', id_zapatilla=id_zapatilla)
@@ -611,5 +620,5 @@ def confirmarCompra(request):
     # Vaciar el carrito después de confirmar la compra
     request.session['carrito'] = {}
     request.session.modified = True
-
+    messages.success(request, 'Gracias por tu compra')
     return render(request, 'aplicacion/compraconfirmada.html')

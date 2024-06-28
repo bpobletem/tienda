@@ -134,6 +134,40 @@
             </div>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% if messages %}
+        {% for m in messages %}
+            <script>
+                var title = ''
+                var icon = ''
+                
+                {% if 'success' in m.tags %}
+                    title = "¡Operación exitosa!";
+                    icon = 'success';
+                {% elif 'info' in m.tags %}
+                    title = "Información";
+                    icon = 'info';
+                {% elif 'warning' in m.tags %}
+                    title = "Advertencia";
+                    icon = 'warning';
+                {% elif 'error' in m.tags %}
+                    title = "Error";
+                    icon = 'error';
+                {% else %}
+                    title = "Mensaje";
+                    icon = 'info';
+                {% endif %}
+
+                Swal.fire({
+                    title: title,
+                    text: "{{m}}",
+                    icon: icon
+                  });
+
+            </script>
+        {% endfor %}
+    {% endif %}
     <script src="{% static 'aplicacion/bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
 </body>
 </html>
