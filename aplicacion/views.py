@@ -117,6 +117,7 @@ def crearPedido(request):
             pedido = form.save()
             formset.instance = pedido
             formset.save()
+            messages.success(request, 'Pedido creado con exito')
             return redirect('listaPedidos')
     else:
         form = PedidoForm()
@@ -132,6 +133,7 @@ def editarPedido(request, pk):
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
+            messages.success(request, 'Pedido editado con exito')
             return redirect('listaPedidos')
     else:
         form = PedidoForm(instance=pedido)
@@ -143,6 +145,7 @@ def eliminarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
     if request.method == 'POST':
         pedido.delete()
+        messages.success(request, 'Pedido eliminado con exito')
         return redirect('listaPedidos')
     return render(request, 'aplicacion/eliminarPedido.html', {'pedido': pedido})
 
