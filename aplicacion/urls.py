@@ -6,7 +6,7 @@ from .views import (index, producto, administrador, detalleproducto, loginAdmin,
                     direccionesusuario, eliminardireccion, editardirecciones, agregardireccion, listaPedidos,
                     crearPedido, editarPedido, eliminarPedido, detallePedido,
                     agregardireccionusuario, editardireccionusuario, eliminardireccionusuario,
-                    search_results
+                    search_results, eliminarProducto
                     )
 from django.conf.urls.static import static
 from django.conf import settings
@@ -15,25 +15,31 @@ urlpatterns = [
     path('', index, name='index'),
     path('buscar/', search_results, name='search_results'),
     path('producto/<int:id>/', producto, name='producto'),
-    path('administrador/', administrador, name='admin'),
+    path('administrador/', administrador, name='administrador'),
     path('detalleproducto/<int:id>', detalleproducto, name='detalleproducto'),
     path('adminpedido/', adminpedido, name='adminpedido'),
     path('anadir/', anadir, name='anadir'),
     path('categoria/<int:id>/', categoria, name='categoria'),
     path('marca/<int:id>/', marca, name='marca'),
     path('direcciones/<str:rut>', direcciones, name='direcciones'),
-    path('agregardireccionusuario/<str:rut>', agregardireccionusuario, name="agregardireccionusuario"),
-    path('editardireccionusuario/<int:id>', editardireccionusuario, name="editardireccionusuario"),
-    path('eliminardireccionusuario/<int:id>', eliminardireccionusuario, name="eliminardireccionusuario"),
+    path('agregardireccionusuario/<str:rut>',
+         agregardireccionusuario, name="agregardireccionusuario"),
+    path('editardireccionusuario/<int:id>',
+         editardireccionusuario, name="editardireccionusuario"),
+    path('eliminardireccionusuario/<int:id>',
+         eliminardireccionusuario, name="eliminardireccionusuario"),
     path('editar/<int:id>', editar, name='editar'),
     path('usuarios/<str:rut>', usuarios, name='usuarios'),
     path('editarusuarios/<str:rut>', editarusuarios, name='editarusuarios'),
     path('agregarusuario/', agregarUsuario, name="agregarUsuario"),
     path('eliminarusuario/<str:rut>', eliminarUsuario, name="eliminarUsuario"),
-    path('direccionesusuario/<str:rut>',direccionesusuario, name="direccionesusuario"),
+    path('direccionesusuario/<str:rut>',
+         direccionesusuario, name="direccionesusuario"),
     path('agregardireccion/<str:rut>', agregardireccion, name="agregardireccion"),
-    path('eliminardireccion/<int:id>', eliminardireccion, name="eliminardireccion"),
-    path('editardirecciones/<int:id>', editardirecciones, name="editardirecciones"),
+    path('eliminardireccion/<int:id>',
+         eliminardireccion, name="eliminardireccion"),
+    path('editardirecciones/<int:id>',
+         editardirecciones, name="editardirecciones"),
     path('loginAdmin/', loginAdmin, name='loginAdmin'),
     path('pedidos/<str:rut>', pedidos, name='pedidos'),
     path('perfil/<str:rut>', perfil, name='perfil'),
@@ -50,7 +56,7 @@ urlpatterns = [
     path('editarPedido/<int:pk>/', editarPedido, name='editarPedido'),
     path('eliminarPedido/<int:pk>/', eliminarPedido, name='eliminarPedido'),
     path('detallePedido/<int:pk>/', detallePedido, name='detallePedido'),
-
+    path('eliminarProducto/<int:id>/', eliminarProducto, name='eliminarProducto'),
 ]
 
 if settings.DEBUG:

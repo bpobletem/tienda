@@ -1,4 +1,5 @@
 {% extends "aplicacion/baseadmin.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container mt-4">
@@ -8,14 +9,14 @@
         <div class="form-group">
             {{ form.as_p }}
         </div>
-        <h4>Zapatillas en el Pedido</h4>
-        <div class="form-group">
-            {{ formset.management_form }}
-            {% for form in formset %}
+        <h4>Productos</h4>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="form-group">
                 {{ form.as_p }}
-            {% endfor %}
-        </div>
-        <button type="submit" class="btn btn-success">Crear Pedido</button>
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Guardar Pedido</button>
     </form>
 </div>
 {% endblock %}

@@ -1,10 +1,10 @@
 # forms.py
 from django import forms
+from django.forms import modelformset_factory
 from .models import Usuario, Direccion, Zapatilla, StockZapatilla, Pedido, PedidoZapatilla
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.forms import AuthenticationForm
-
 
 
 class SearchForm(forms.Form):
@@ -24,13 +24,16 @@ class DireccionForm(forms.ModelForm):
 class AdminLoginForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
         if not user.is_superuser:
-            raise forms.ValidationError("Solo los administradores pueden acceder a esta página.")
+            raise forms.ValidationError(
+                "Solo los administradores pueden acceder a esta página.")
 
 
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
-    fnac = forms.DateInput(format=('%Y-%m-%d'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
+    password2 = forms.CharField(
+        label='Confirmar contraseña', widget=forms.PasswordInput)
+    fnac = forms.DateInput(format=(
+        '%Y-%m-%d'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
     class Meta:
         model = Usuario
@@ -55,7 +58,9 @@ class UsuarioForm(forms.ModelForm):
 
 
 class UpdateUsuarioForm(forms.ModelForm):
-    fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
+    fnac = forms.DateInput(format=(
+        '%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
+
     class Meta:
         model = Usuario
         fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
@@ -89,7 +94,14 @@ class StockZapatillaForm(forms.ModelForm):
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['cliente', 'direccion', 'estado']
+        fields = ['estado']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['estado'].widget = forms.Select(
+            attrs={'class': 'form-control'})  # Widget de selección
+        # Opciones del campo estado
+        self.fields['estado'].choices = self.Meta.model.ESTADO_CHOICES
 
 
 class PedidoZapatillaForm(forms.ModelForm):
@@ -98,5 +110,15 @@ class PedidoZapatillaForm(forms.ModelForm):
         fields = ['zapatilla',  'cantidad']
 
 
-PedidoZapatillaFormSet = forms.inlineformset_factory(
-    Pedido, PedidoZapatilla, form=PedidoZapatillaForm, extra=1)
+class PedidoEstadoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['estado']
+        widgets = {
+            'estado': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+PedidoZapatillaFormSet = modelformset_factory(
+    PedidoZapatilla, form=PedidoZapatillaForm, extra=1
+)

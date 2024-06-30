@@ -1,21 +1,36 @@
 {% extends "aplicacion/baseadmin.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container mt-4">
-    <h3>Editar Pedido</h3>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.as_p }}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-center">Editar Pedido</h3>
         </div>
-        <h4>Zapatillas en el Pedido</h4>
-        <div class="form-group">
-            {{ formset.management_form }}
-            {% for form in formset %}
-                {{ form.as_p }}
-            {% endfor %}
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id_cliente">Cliente:</label>
+                    <input type="text" id="id_cliente" class="form-control" value="{{ form.instance.cliente.nombre }} {{ form.instance.cliente.apellido }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="id_direccion">Dirección:</label>
+                    <input type="text" id="id_direccion" class="form-control" value="{{ form.instance.direccion }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="id_fecha">Fecha:</label>
+                    <input type="text" id="id_fecha" class="form-control" value="{{ form.instance.fecha }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="id_estado"></label>
+                    {{ form.estado|as_crispy_field }}
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success">Actualizar Pedido</button>
+                </div>
+            </form>
         </div>
-        <button type="submit" class="btn btn-success">Actualizar Pedido</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

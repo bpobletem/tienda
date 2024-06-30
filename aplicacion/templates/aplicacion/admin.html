@@ -7,7 +7,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h3 class="mb-0">Productos</h3>
             <div>
-                <a href="{% url "anadir" %}" class="btn btn-primary">
+                <a href="{% url 'anadir' %}" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i> Añadir producto
                 </a>
             </div>
@@ -40,8 +40,8 @@
                                             <td>{{ zapatilla.marca }}</td>
                                             <td>${{ zapatilla.precio }}</td>
                                             <td> 
-                                                <a class="btn btn-primary" href="{% url "detalleproducto" zapatilla.id %}" >Detalles</a>
-                                                <a class="btn btn-danger">Eliminar</a> 
+                                                <a class="btn btn-primary" href="{% url 'detalleproducto' zapatilla.id %}">Detalles</a>
+                                                <a class="btn btn-danger" href="{% url 'eliminarProducto' zapatilla.id %}">Eliminar</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -64,11 +64,13 @@
     </div>
     
     <script>
-        function borrarProducto(button) {
-            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-                const card = button.closest('.col-md-3');
-                card.remove();
-            }
-        }
+        // Puedes añadir confirmación antes de eliminar si lo deseas
+        document.querySelectorAll('.btn.btn-danger').forEach(item => {
+            item.addEventListener('click', function(event) {
+                if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+                    event.preventDefault();
+                }
+            });
+        });
     </script>
 {% endblock content %}
