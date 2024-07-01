@@ -1,5 +1,6 @@
 {% extends "aplicacion/baseadmin.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <!-- Producto -->
@@ -8,7 +9,7 @@
             <div class="row">
                 <div class="col-12 col-md-6">
                     <div class="product-img">
-                        <img src="{% static "aplicacion/img/producto/producto1a.webp" %}" class="img-fluid rounded">
+                        <img src="{{ zapatilla_form.instance.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla_form.instance.modelo }}">
                         <div class="img-buttons">
                             <button type="button" class="img-btn btn btn-outline-light">
                                 <i class="fa-solid fa-chevron-left"></i>
@@ -22,37 +23,16 @@
                 <div class="col-12 col-md-6">
                     <!-- Formulario de edición -->
                     <p id="mensajeError" style="color: red;"></p>
-                    <form id="formulario_editar" class="" action="admin.html">
-                        <h3 class="producto-modelo">Air Max Pulse</h3>
-                        <p class="text-body-secondary producto-marca mb-2">Nike</p>
-                        <label for="precio" class="form-label">Precio:</label>
-                        <input type="text" id="precio" name="precio" class="form-control mb-2" value="150000">
-                        <p id="errorPrecio" style="color: red;"></p>
-                        <label for="nombre" class="form-label">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" class="form-control mb-2" value="Air Max Pulse">
-                        <p id="errorNombre" style="color: red;"></p>
-                        <label for="tallas" class="form-label">Tallas disponibles:</label>
-                        <p id="errorTallas" style="color: red;"></p>
-                        <select id="tallas" name="tallas" class="form-select mb-2" multiple>
-                            <option value="36">36</option>
-                            <option value="37">37</option>
-                            <option value="38">38</option>
-                            <!-- Agregar las demás tallas aquí -->
-                        </select>
-                        <label for="imagen" class="form-label">Seleccionar imagen:</label>
-                        <input type="file" id="imagen" name="imagen" class="form-control mb-2" accept="image/*">
-                        <p id="errorImagen" style="color: red;"></p>
-                        <button type="submit" class="btn btn-dark mb-2">Listo</button>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ zapatilla_form|crispy }}
+                        {{ stock_form|crispy }}
+                        <button type="submit" class="btn btn-dark mb-2">Guardar cambios</button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Termino seccion producto -->
-
-
- 
-    <script src="./assets/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
-    <script src="./assets/js/validareditar.js"></script>
-</body>
+    <script src="{% static 'aplicacion/bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'aplicacion/js/validareditar.js' %}"></script>
 {% endblock content %}

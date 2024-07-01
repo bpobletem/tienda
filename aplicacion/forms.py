@@ -71,6 +71,9 @@ class ZapatillaForm(forms.ModelForm):
         model = Zapatilla
         fields = ['marca', 'modelo', 'precio',
                   'categoria', 'descripcion', 'foto']
+        widgets = {
+            'categoria': forms.Select(),
+        }
 
     def __init__(self, *args, **kwargs):
         super(ZapatillaForm, self).__init__(*args, **kwargs)
@@ -83,6 +86,7 @@ class StockZapatillaForm(forms.ModelForm):
     class Meta:
         model = StockZapatilla
         fields = ['zapatilla', 'talla', 'cantidad']
+        exclude = ['zapatilla']
 
     def __init__(self, *args, **kwargs):
         super(StockZapatillaForm, self).__init__(*args, **kwargs)

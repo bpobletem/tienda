@@ -74,6 +74,27 @@ def producto(request, id):
     return render(request, 'aplicacion/producto.html', datos)
 
 
+def detalleproducto(request, id):
+    zapatilla = get_object_or_404(Zapatilla, id=id)
+    return render(request, 'aplicacion/detalleproducto.html', {'zapatilla': zapatilla})
+
+
+def editar(request, id):
+    zapatilla = get_object_or_404(Zapatilla, id=id)
+    if request.method == 'POST':
+        zapatilla_form = ZapatillaForm(
+            request.POST, request.FILES, instance=zapatilla)
+        stock_form = StockZapatillaForm(request.POST)
+        if zapatilla_form.is_valid() and stock_form.is_valid():
+            zapatilla_form.save()
+            stock_form.save()
+            return redirect('detalleproducto', id=id)
+    else:
+        zapatilla_form = ZapatillaForm(instance=zapatilla)
+        stock_form = StockZapatillaForm()
+    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_form': stock_form})
+
+
 @admin_required
 def administrador(request):
     zapatillas = Zapatilla.objects.order_by('modelo')
@@ -295,14 +316,6 @@ def eliminardireccionusuario(request, id):
         usuario.direcciones.remove(direccion)
     direccion.delete()
     return redirect('direcciones', rut=usuario.rut)
-
-
-def editar(request, id):  # editarproducto
-    return render(request, 'aplicacion/editar.html')
-
-
-def editar(request, id):  # editarproducto
-    return render(request, 'aplicacion/editar.html')
 
 
 # def login(request):
