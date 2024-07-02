@@ -1,7 +1,13 @@
 {% extends "aplicacion/base.html" %}
 
 {% block content %}
-<h2>Compra Confirmada</h2>
-<p>Gracias por tu compra. Tu pedido ha sido realizado con éxito.</p>
-<a href="{% url 'detallePedido' pedido.pk %}">Ver Detalles del Pedido</a>
+<div class="card">
+    <div class="card-head">
+        <h2>Compra Confirmada</h2>
+    </div>
+    <div class="card-body">
+        <p>Gracias por tu compra. Tu pedido ha sido realizado con éxito.</p>
+        <a href="{% url 'pedidos' user.rut %}">Ver Detalles del Pedido</a>
+    </div>
+</div>
 {% endblock %}

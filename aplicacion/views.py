@@ -174,7 +174,6 @@ def editarPedido(request, pk):
         form = PedidoEstadoForm(request.POST, instance=pedido)
         if form.is_valid():
             form.save()
-            formset.save()
             return redirect('listaPedidos')
     else:
         form = PedidoEstadoForm(instance=pedido)
@@ -359,9 +358,10 @@ def loginAdmin(request):
 def pedidos(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     pedidos = Pedido.objects.filter(cliente=usuario)
+
     data = {
         'usuario': usuario,
-        'pedidos': pedidos
+        'pedidos': pedidos,
     }
     return render(request, 'aplicacion/pedidos.html', data)
 
@@ -476,7 +476,7 @@ def agregarUsuario(request):
 
     return render(request, 'aplicacion/agregarusuario.html', data)
 
-
+@admin_required
 def eliminarUsuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -497,7 +497,7 @@ def eliminarUsuario(request, rut):
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
 
-
+@admin_required
 def editarusuarios(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
 
@@ -517,7 +517,7 @@ def editarusuarios(request, rut):
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
 
-
+@login_required
 def direccionesusuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     direcciones = usuario.direcciones.all()
@@ -527,7 +527,7 @@ def direccionesusuario(request, rut):
     }
     return render(request, 'aplicacion/direccionesusuario.html', data)
 
-
+@login_required
 def agregardireccion(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     if request.method == 'POST':
@@ -547,7 +547,7 @@ def agregardireccion(request, rut):
 
     return render(request, 'aplicacion/agregardireccion.html', data)
 
-
+@login_required
 def editardirecciones(request, id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -568,7 +568,7 @@ def editardirecciones(request, id):
     }
     return render(request, 'aplicacion/editardirecciones.html', data)
 
-
+@login_required
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
     usuario = direccion.usuario_set.first()
@@ -578,11 +578,13 @@ def eliminardireccion(request, id):
     messages.success(request, 'Direccion eliminada con exito')
     return redirect('direccionesusuario', rut=usuario.rut)
 
-
+@login_required
 def carrito(request):
     carrito = request.session.get('carrito', {})
     zapatillas_en_carrito = []
     total_carrito = 0
+    usuario = request.user
+    direcciones = usuario.direcciones.all()
 
     for item_id, item_info in carrito.items():
         zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
@@ -599,6 +601,7 @@ def carrito(request):
     datos = {
         'zapatillas_en_carrito': zapatillas_en_carrito,
         'total_carrito': total_carrito,
+        'direcciones' : direcciones,
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
@@ -610,7 +613,7 @@ def agregarCarrito(request, id_zapatilla):
 
         # Verificar si la talla es válida
         if not talla:
-            return redirect('detalle_zapatilla', id_zapatilla=zapatilla.id)
+            return redirect('producto', id_zapatilla=id_zapatilla)
 
         talla = talla.replace(',', '.')
 
@@ -632,7 +635,7 @@ def agregarCarrito(request, id_zapatilla):
             carrito[carrito_item_id]['cantidad'] += 1
         else:
             carrito[carrito_item_id] = {
-                'id': zapatilla.id,
+                'id': id_zapatilla,
                 'modelo': zapatilla.modelo,
                 'precio': zapatilla.precio,
                 'cantidad': 1,
@@ -645,7 +648,7 @@ def agregarCarrito(request, id_zapatilla):
         messages.success(request, 'Item agregado al carrito con exito')
         return redirect('carrito')
 
-    return redirect('detalle_zapatilla', id_zapatilla=id_zapatilla)
+    return redirect('producto', id_zapatilla=id_zapatilla)
 
 
 @login_required

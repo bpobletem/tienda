@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block imports %}
-<link rel="stylesheet" href="{% static "aplicacion/css/perfil.css" %}">
-{% endblock imports %}    
+<link rel="stylesheet" href="{% static 'aplicacion/css/perfil.css' %}">
+{% endblock imports %}
 
 {% block content %}
 <section>
     <div class="container">
-        <h1>Hola, {{usuario.nombre}} </h1>
+        <h1>Hola, {{ usuario.nombre }}</h1>
         <div class="row mt-4">
             <div class="row">
                 <!-- Menu lateral -->
@@ -16,18 +16,18 @@
                     <div class="sidebar bg-light rounded">
                         <ul class="list-unstyled">
                             <li class="p-3">
-                                <a href="{% url "perfil" usuario.rut %}">Datos personales</a>
+                                <a href="{% url 'perfil' usuario.rut %}">Datos personales</a>
                             </li>
                             <li class="p-3">
-                                <a href="{% url "direcciones" usuario.rut %}">Direcciones</a>
+                                <a href="{% url 'direcciones' usuario.rut %}">Direcciones</a>
                             </li>
                             <li class="p-3">
-                                <a href="{% url "pedidos" usuario.rut %}">Pedidos</a>
+                                <a href="{% url 'pedidos' usuario.rut %}">Pedidos</a>
                             </li>
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="col-12 col-md-8">
                     <h4>Mis Pedidos</h4>
                     {% for pedido in pedidos %}
@@ -41,39 +41,40 @@
                             </div>
                         </div>
 
-                        {% for zapatilla in pedido.zapatillas.all %}
-                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
-                                <!-- Image -->
-                                <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
-                                    <img src="{{ zapatilla.foto.url }}" class="w-100" alt="{{ zapatilla.modelo }}" />
-                                    <a href="#!">
-                                        <div class="mask"></div>
-                                    </a>
-                                </div>
+                        {% for item in pedido.pedidozapatilla_set.all %}
+                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                            <!-- Image -->
+                            <div class="bg-image ripple rounded" data-mdb-ripple-color="light">
+                                <img src="{{ item.zapatilla.foto.url }}" class="w-100" alt="{{ item.zapatilla.modelo }}" />
+                                <a href="#!">
+                                    <div class="mask"></div>
+                                </a>
                             </div>
+                        </div>
 
-                            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
-                                <!-- Data -->
-                                <p><strong>{{ zapatilla.modelo }}</strong></p>
-                                <p>Talla: {{ zapatilla.talla }}</p>
+                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                            <!-- Data -->
+                            <p><strong>{{ item.zapatilla.modelo }}</strong></p>
+                            <p>Talla: {{ item.zapatilla.talla }}</p>
+                            <p>Cantidad: {{ item.cantidad }}</p>
+                        </div>
 
-                            </div>
-
-                            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
-                                <!-- Boton comprar de nuevo -->
-                                <p class="text-start text-md-center">
-                                    <a href="{% url 'producto' zapatilla.id %}">
-                                        <button class="btn btn-dark">Comprar de nuevo</button>
-                                    </a>
-                                </p>
-                            </div>
-                            <!-- Divisor -->
-                            <hr class="" />
+                        <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                            <!-- Boton comprar de nuevo -->
+                            <p class="text-start text-md-center">
+                                <a class="btn btn-dark" href="{% url 'producto' item.zapatilla.id %}">
+                                    Comprar de nuevo
+                                </a>
+                            </p>
+                        </div>
+                        <!-- Divisor -->
+                        <hr class="" />
                         {% endfor %}
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock content %}

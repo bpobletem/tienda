@@ -70,18 +70,36 @@
                         <!-- Divisor -->
                         <hr class="my-4"/>
 
+                        <!-- Selección de Dirección -->
                         <div class="card mb-4">
+                            <div class="card-body">
+                                <form action="{% url 'confirmarCompra' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="direccion">Selecciona una dirección de despacho:</label>
+                                        <select id="direccion" name="direccion" class="form-select">
+                                            {% for dir in direcciones %}
+                                                <option value="{{ dir.id }}">
+                                                    {{ dir.calle }} {{ dir.numero }} 
+                                                    {% if detalle %}
+                                                        {{ dir.detalle }}
+                                                    {% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                        Ir a pagar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Fin Selección de Dirección -->
+
+                        <div class="card mb-4 mb-lg-0">
                             <div class="card-body">
                                 <p><strong>Entrega estimada</strong></p>
                                 <p class="mb-0">{{ delivery_date }}</p>
-                            </div>
-                        </div>
-                        <div class="card mb-4 mb-lg-0">
-                            <div class="card-body">
-                                <p><strong>Aceptamos</strong></p>
-                                <img class="me-2" width="30px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg" alt="Visa"/>
-                                <img class="me-2" width="30px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="American Express"/>
-                                <img class="me-2" width="30px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg" alt="Mastercard"/>
                             </div>
                         </div>
                     </div>
@@ -109,16 +127,10 @@
                                 <span><strong>${{ total_carrito }}</strong></span>
                             </li>
                         </ul>
-
-                        <form action="{% url 'confirmarCompra' %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                Ir a pagar
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 </section>
