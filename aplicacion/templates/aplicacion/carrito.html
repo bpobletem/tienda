@@ -33,6 +33,7 @@
                                 <p>Talla: {{ item.talla }}</p>
                                 <form action="{% url 'eliminarCarrito' item.zapatilla.id %}" method="post">
                                     {% csrf_token %}
+                                    <input type="hidden" name="carrito_item_id" value="{{ item.zapatilla.id }}_{{ item.talla }}">
                                     <button type="submit" class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init title="Eliminar ítem">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>

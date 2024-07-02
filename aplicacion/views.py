@@ -650,8 +650,10 @@ def agregarCarrito(request, id_zapatilla):
 
 
 @login_required
-def eliminarCarrito(request, carrito_item_id):
+def eliminarCarrito(request, id_item):
     if request.method == 'POST':
+        talla = request.POST.get('carrito_item_id').split('_')[1]  # Extrae la talla desde el formulario
+        carrito_item_id = f"{id_item}_{talla}"
         carrito = request.session.get('carrito', {})
 
         # Verifica si el carrito_item_id está en el carrito
@@ -661,6 +663,7 @@ def eliminarCarrito(request, carrito_item_id):
             request.session.modified = True
 
     return redirect('carrito')
+
 
 
 def confirmarCompra(request):

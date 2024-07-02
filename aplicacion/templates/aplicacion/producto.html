@@ -14,21 +14,21 @@
             <div class="col-12 col-md-6">
                 <div class="product-img">
                     <img src="{{ zapatilla.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla.modelo }}">
-                    <div class="img-buttons">
+                    {% comment %} <div class="img-buttons">
                         <button type="button" class="img-btn btn btn-outline-light">
                             <i class="fa-solid fa-chevron-left"></i>
                         </button>
                         <button type="button" class="img-btn btn btn-outline-light">
                             <i class="fa-solid fa-chevron-right"></i>
                         </button>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <h3 class="producto-modelo"> {{ zapatilla.modelo }} </h3>
                 <p class="text-body-secondary producto-marca mb-2"> {{ zapatilla.marca }} </p>
                 <p class="producto-descripcion mb-2"> {{ zapatilla.descripcion }} </p>
-                <p class="text-body-emphasis producto-precio mb-3 fw-medium" id="precio-producto">${{ zapatilla.precio }} </p>
+                <p class="text-body-emphasis producto-precio mb-3 fw-medium fs-5" id="precio-producto">${{ zapatilla.precio }} </p>
                 <p class="text-body-emphasis producto-precio mb-3 fw-medium" id="dolar"></p>
 
                 <!-- Mostrar las tallas disponibles -->
