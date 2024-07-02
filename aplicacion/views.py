@@ -660,10 +660,28 @@ def eliminarCarrito(request, carrito_item_id):
     return redirect('carrito')
 
 
+@login_required
 def confirmarCompra(request):
     carrito = request.session.get('carrito', {})
     if not carrito:
         return redirect('carrito')
+
+    usuario = request.user
+    # Suponiendo que el usuario tiene al menos una dirección
+    direccion = usuario.direcciones.first()
+
+    if not direccion:
+        messages.error(
+            request, 'Necesitas tener una dirección registrada para realizar una compra.')
+        return redirect('carrito')
+
+    total = 0
+
+    pedido = Pedido.objects.create(
+        cliente=usuario,
+        direccion=direccion,
+        estado='P',
+    )
 
     for item_id, item_info in carrito.items():
         zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
@@ -673,12 +691,26 @@ def confirmarCompra(request):
         if stock.cantidad >= item_info['cantidad']:
             stock.cantidad -= item_info['cantidad']
             stock.save()
+
+            cantidad = item_info['cantidad']
+            PedidoZapatilla.objects.create(
+                pedido=pedido,
+                zapatilla=zapatilla,
+                cantidad=cantidad
+            )
+
+            total += zapatilla.precio * cantidad
         else:
-            # Manejo de error si no hay suficiente stock
+            messages.error(
+                request, f'No hay suficiente stock de {zapatilla.modelo} en talla {item_info["talla"]}.')
             return redirect('carrito')
+
+    pedido.total = total
+    pedido.save()
 
     # Vaciar el carrito después de confirmar la compra
     request.session['carrito'] = {}
     request.session.modified = True
+
     messages.success(request, 'Gracias por tu compra')
-    return render(request, 'aplicacion/compraconfirmada.html')
+    return render(request, 'aplicacion/compraconfirmada.html', {'pedido': pedido})

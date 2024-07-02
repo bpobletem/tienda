@@ -1,11 +1,7 @@
 {% extends "aplicacion/base.html" %}
-{% load static %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h3 class="text-center">
-            Gracias por su compra
-        </h3>
-        <p></p>
-    </div>
-{% endblock content %}
+<h2>Compra Confirmada</h2>
+<p>Gracias por tu compra. Tu pedido ha sido realizado con éxito.</p>
+<a href="{% url 'detallePedido' pedido.pk %}">Ver Detalles del Pedido</a>
+{% endblock %}
