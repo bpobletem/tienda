@@ -3,36 +3,36 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <!-- Producto -->
-    <section>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-6">
-                    <div class="product-img">
-                        <img src="{{ zapatilla_form.instance.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla_form.instance.modelo }}">
-                        <div class="img-buttons">
-                            <button type="button" class="img-btn btn btn-outline-light">
-                                <i class="fa-solid fa-chevron-left"></i>
-                            </button>
-                            <button type="button" class="img-btn btn btn-outline-light">
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <!-- Formulario de edición -->
-                    <p id="mensajeError" style="color: red;"></p>
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{ zapatilla_form|crispy }}
-                        {{ stock_form|crispy }}
-                        <button type="submit" class="btn btn-dark mb-2">Guardar cambios</button>
-                    </form>
+<section>
+    <div class="container">
+        <h1>Editar Producto</h1>
+        <div class="row mt-4">
+            <div class="col-12 col-md-6">
+                <div class="product-img">
+                    <img src="{{ zapatilla_form.instance.foto.url }}" class="img-fluid rounded" alt="{{ zapatilla_form.instance.modelo }}">
                 </div>
             </div>
+            <div class="col-12 col-md-6">
+                <!-- Formulario de edición -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ zapatilla_form|crispy }}
+                    <h2>Tallas y Cantidades</h2>
+                    {{ stock_formset.management_form }}
+                    {% for form in stock_formset %}
+                        <div class="form-row">
+                            <div class="col">
+                                {{ form.talla|as_crispy_field }}
+                            </div>
+                            <div class="col">
+                                {{ form.cantidad|as_crispy_field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-dark mb-2">Guardar cambios</button>
+                </form>
+            </div>
         </div>
-    </section>
-    <script src="{% static 'aplicacion/bootstrap-5.3.3-dist/js/bootstrap.bundle.js' %}"></script>
-    <script src="{% static 'aplicacion/js/validareditar.js' %}"></script>
+    </div>
+</section>
 {% endblock content %}

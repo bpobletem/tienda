@@ -72,7 +72,7 @@ class ZapatillaForm(forms.ModelForm):
         fields = ['marca', 'modelo', 'precio',
                   'categoria', 'descripcion', 'foto']
         widgets = {
-            'categoria': forms.Select(),
+            'categoria': forms.CheckboxSelectMultiple(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -85,7 +85,7 @@ class ZapatillaForm(forms.ModelForm):
 class StockZapatillaForm(forms.ModelForm):
     class Meta:
         model = StockZapatilla
-        fields = ['zapatilla', 'talla', 'cantidad']
+        fields = ['talla', 'cantidad']
         exclude = ['zapatilla']
 
     def __init__(self, *args, **kwargs):
@@ -99,13 +99,15 @@ class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
         fields = ['estado']
+        widgets = {
+            'estado': forms.Select(choices=Pedido.ESTADO_CHOICES),
+        }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['estado'].widget = forms.Select(
-            attrs={'class': 'form-control'})  # Widget de selección
-        # Opciones del campo estado
-        self.fields['estado'].choices = self.Meta.model.ESTADO_CHOICES
+        super(PedidoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Guardar Cambios'))
 
 
 class PedidoZapatillaForm(forms.ModelForm):
@@ -119,7 +121,7 @@ class PedidoEstadoForm(forms.ModelForm):
         model = Pedido
         fields = ['estado']
         widgets = {
-            'estado': forms.TextInput(attrs={'class': 'form-control'}),
+            'estado': forms.Select(choices=Pedido.ESTADO_CHOICES, attrs={'class': 'form-control'}),
         }
 
 

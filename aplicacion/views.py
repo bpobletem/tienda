@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.db.models import Q
 from django.forms import modelformset_factory
+from django.forms import inlineformset_factory
 
 
 def admin_required(view_func):
@@ -81,18 +82,26 @@ def detalleproducto(request, id):
 
 def editar(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
+    StockFormSet = inlineformset_factory(
+        Zapatilla, StockZapatilla, form=StockZapatillaForm, extra=1, can_delete=True)
+
     if request.method == 'POST':
         zapatilla_form = ZapatillaForm(
             request.POST, request.FILES, instance=zapatilla)
-        stock_form = StockZapatillaForm(request.POST)
-        if zapatilla_form.is_valid() and stock_form.is_valid():
+        stock_formset = StockFormSet(request.POST, instance=zapatilla)
+
+        if zapatilla_form.is_valid() and stock_formset.is_valid():
             zapatilla_form.save()
-            stock_form.save()
+            stock_formset.save()
             return redirect('detalleproducto', id=id)
+        else:
+            print(zapatilla_form.errors)
+            print(stock_formset.errors)
     else:
         zapatilla_form = ZapatillaForm(instance=zapatilla)
-        stock_form = StockZapatillaForm()
-    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_form': stock_form})
+        stock_formset = StockFormSet(instance=zapatilla)
+
+    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_formset': stock_formset})
 
 
 @admin_required
@@ -155,21 +164,17 @@ def crearPedido(request):
 
 def editarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
+    zapatillas_pedido = PedidoZapatilla.objects.filter(pedido=pedido)
 
     if request.method == 'POST':
         form = PedidoEstadoForm(request.POST, instance=pedido)
-        # No necesitamos validar ni guardar el formset en este caso
-
         if form.is_valid():
             form.save()
             return redirect('listaPedidos')
     else:
         form = PedidoEstadoForm(instance=pedido)
 
-    # Siempre inicializamos el formset con el queryset vacío para que no se pueda modificar
-    formset = PedidoZapatillaFormSet(queryset=PedidoZapatilla.objects.none())
-
-    return render(request, 'aplicacion/editarPedido.html', {'form': form, 'formset': formset})
+    return render(request, 'aplicacion/editarPedido.html', {'form': form, 'zapatillas_pedido': zapatillas_pedido})
 
 
 def eliminarPedido(request, pk):
