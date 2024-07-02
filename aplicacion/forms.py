@@ -30,10 +30,8 @@ class AdminLoginForm(AuthenticationForm):
 
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label='Confirmar contraseña', widget=forms.PasswordInput)
-    fnac = forms.DateInput(format=(
-        '%Y-%m-%d'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
+    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+    fnac = forms.DateInput(format=('%Y-%m-%d'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
     class Meta:
         model = Usuario
@@ -51,11 +49,12 @@ class UsuarioForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.contrasenia = self.cleaned_data["password1"]
+        user.set_password(self.cleaned_data["password1"])
+        user.is_staff = False  
+        user.is_superuser = False  
         if commit:
             user.save()
         return user
-
 
 class UpdateUsuarioForm(forms.ModelForm):
     fnac = forms.DateInput(format=(

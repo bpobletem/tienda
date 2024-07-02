@@ -25,19 +25,21 @@ def admin_required(view_func):
 
 
 def search_results(request):
-    query = request.GET.get('query')
+    query = request.GET.get('query', '')
     results = []
+    paginator = None
     page = request.GET.get('page', 1)
 
     if query:
         results = Zapatilla.objects.filter(
             Q(modelo__icontains=query) | Q(marca__nombre__icontains=query)
-        )
+        ).order_by('modelo')
+
+        paginator = Paginator(results, 5)  # Muestra 5 productos por página
 
         try:
-            paginator = Paginator(results, 5)
             results = paginator.page(page)
-        except:
+        except Exception as e:
             raise Http404
 
     data = {
@@ -647,13 +649,17 @@ def agregarCarrito(request, id_zapatilla):
 
 
 @login_required
-def eliminarCarrito(request, carrito_item_id):
+def eliminarCarrito(request, id_item):
     if request.method == 'POST':
+        talla = request.POST.get('carrito_item_id').split(
+            '_')[1]  # Extrae la talla desde el formulario
+        carrito_item_id = f"{id_item}_{talla}"
         carrito = request.session.get('carrito', {})
 
         # Verifica si el carrito_item_id está en el carrito
         if carrito_item_id in carrito:
             del carrito[carrito_item_id]
+            messages.success(request, 'Item eliminado del carrito con exito')
             request.session['carrito'] = carrito
             request.session.modified = True
 
