@@ -172,6 +172,7 @@ def editarPedido(request, pk):
         form = PedidoEstadoForm(request.POST, instance=pedido)
         if form.is_valid():
             form.save()
+            formset.save()
             return redirect('listaPedidos')
     else:
         form = PedidoEstadoForm(instance=pedido)
@@ -342,7 +343,7 @@ def loginAdmin(request):
             if user is not None:
                 login(request, user)
                 # Redirigir a la página de administrador después del login
-                return redirect('admin')
+                return redirect('administrador')
     else:
         form = AdminLoginForm()
 
