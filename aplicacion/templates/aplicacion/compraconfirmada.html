@@ -1,13 +1,15 @@
 {% extends "aplicacion/base.html" %}
 
 {% block content %}
-<div class="card">
-    <div class="card-head">
-        <h2>Compra Confirmada</h2>
-    </div>
-    <div class="card-body">
-        <p>Gracias por tu compra. Tu pedido ha sido realizado con éxito.</p>
-        <a href="{% url 'pedidos' user.rut %}">Ver Detalles del Pedido</a>
+<div class="container col-12 col-md-6 mt-3">
+    <div class="card">
+        <div class="card-header text-center align-items-center">
+            <h3>Compra Confirmada</h3>
+        </div>
+        <div class="card-body text-center">
+            <p>Gracias por tu compra. Tu pedido ha sido realizado con éxito.</p>
+            <a class="btn btn-primary mt-3" href="{% url 'pedidos' user.rut %}">Ver Detalles del Pedido</a>
+        </div>
     </div>
 </div>
 {% endblock %}

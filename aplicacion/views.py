@@ -671,55 +671,56 @@ def eliminarCarrito(request, id_item):
 
 @login_required
 def confirmarCompra(request):
-    carrito = request.session.get('carrito', {})
-    if not carrito:
-        return redirect('carrito')
+    if request.method == 'POST':
+        carrito = request.session.get('carrito', {})
+        if not carrito:
+            return redirect('carrito')
 
-    usuario = request.user
-    # Suponiendo que el usuario tiene al menos una dirección
-    direccion = usuario.direcciones.first()
+        usuario = request.user
+        direccion_id = request.POST.get('direccion')
+        direccion = get_object_or_404(Direccion, id=direccion_id, usuario=usuario)
 
-    if not direccion:
-        messages.error(
-            request, 'Necesitas tener una dirección registrada para realizar una compra.')
-        return redirect('carrito')
+        total = 0
+        items_validos = []
 
-    total = 0
+        # Verificar stock sin crear el pedido
+        for item_id, item_info in carrito.items():
+            zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
+            stock = get_object_or_404(
+                StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
 
-    pedido = Pedido.objects.create(
-        cliente=usuario,
-        direccion=direccion,
-        estado='P',
-    )
+            if stock.cantidad >= item_info['cantidad']:
+                items_validos.append((zapatilla, stock, item_info['cantidad']))
+                total += zapatilla.precio * item_info['cantidad']
+            else:
+                messages.error(
+                    request, f'No hay suficiente stock de {zapatilla.modelo} en talla {item_info["talla"]}.')
+                return redirect('carrito')
 
-    for item_id, item_info in carrito.items():
-        zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
-        stock = get_object_or_404(
-            StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
+        # Crear el pedido solo si todos los items son válidos
+        pedido = Pedido.objects.create(
+            cliente=usuario,
+            direccion=direccion,
+            estado='P',
+            total=total,
+        )
 
-        if stock.cantidad >= item_info['cantidad']:
-            stock.cantidad -= item_info['cantidad']
+        # Procesar los items válidos
+        for zapatilla, stock, cantidad in items_validos:
+            stock.cantidad -= cantidad
             stock.save()
 
-            cantidad = item_info['cantidad']
             PedidoZapatilla.objects.create(
                 pedido=pedido,
                 zapatilla=zapatilla,
                 cantidad=cantidad
             )
 
-            total += zapatilla.precio * cantidad
-        else:
-            messages.error(
-                request, f'No hay suficiente stock de {zapatilla.modelo} en talla {item_info["talla"]}.')
-            return redirect('carrito')
+        # Vaciar el carrito después de confirmar la compra
+        request.session['carrito'] = {}
+        request.session.modified = True
 
-    pedido.total = total
-    pedido.save()
+        messages.success(request, 'Gracias por tu compra')
+        return render(request, 'aplicacion/compraconfirmada.html', {'pedido': pedido})
 
-    # Vaciar el carrito después de confirmar la compra
-    request.session['carrito'] = {}
-    request.session.modified = True
-
-    messages.success(request, 'Gracias por tu compra')
-    return render(request, 'aplicacion/compraconfirmada.html', {'pedido': pedido})
+    return redirect('carrito')
