@@ -25,7 +25,8 @@ class UsuarioManager(BaseUserManager):
         if not rut:
             raise ValueError('El RUT es obligatorio')
         correo = self.normalize_email(correo)
-        user = self.model(correo=correo, nombre=nombre, apellido=apellido, rut=rut, **extra_fields)
+        user = self.model(correo=correo, nombre=nombre,
+                          apellido=apellido, rut=rut, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -35,7 +36,7 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
         extra_fields.setdefault('telefono', '0000000000')
-        extra_fields.setdefault('fnac', '1900-01-01')  
+        extra_fields.setdefault('fnac', '1900-01-01')
 
         return self.create_user(correo, nombre, apellido, password, rut, **extra_fields)
 
@@ -45,16 +46,17 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     correo = models.EmailField(unique=True, max_length=254)
-    fnac = models.DateField(verbose_name="Fecha de Nacimiento", default='1950-01-01')
+    fnac = models.DateField(
+        verbose_name="Fecha de Nacimiento", default='1950-01-01')
     direcciones = models.ManyToManyField('Direccion', blank=True)
-    telefono = models.CharField(max_length=15, default='0000000000') 
+    telefono = models.CharField(max_length=15, default='0000000000')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 
     USERNAME_FIELD = 'correo'
-    REQUIRED_FIELDS = ['nombre', 'apellido', 'rut'] 
+    REQUIRED_FIELDS = ['nombre', 'apellido', 'rut']
 
     class Meta:
         db_table = 'auth_user'
@@ -119,7 +121,17 @@ class ItemCarrito(models.Model):
 class Pedido(models.Model):
     cliente = models.ForeignKey('Usuario', on_delete=models.CASCADE)
     direccion = models.ForeignKey('Direccion', on_delete=models.CASCADE)
-    estado = models.CharField(max_length=100)
+
+    # Definir opciones para el campo estado
+    ESTADO_CHOICES = (
+        ('P', 'Pendiente'),
+        ('E', 'En proceso'),
+        ('F', 'Finalizado'),
+        # Puedes agregar más opciones según sea necesario
+    )
+    estado = models.CharField(
+        max_length=1, choices=ESTADO_CHOICES, default='P')
+
     fecha = models.DateTimeField(default=timezone.now)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 

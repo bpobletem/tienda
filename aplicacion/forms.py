@@ -1,8 +1,8 @@
 # forms.py
 from django import forms
+from django.forms import modelformset_factory
 from .models import Usuario, Direccion, Zapatilla, StockZapatilla, Pedido, PedidoZapatilla
 from django.contrib.auth.forms import AuthenticationForm
-
 
 
 class SearchForm(forms.Form):
@@ -22,13 +22,16 @@ class DireccionForm(forms.ModelForm):
 class AdminLoginForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
         if not user.is_superuser:
-            raise forms.ValidationError("Solo los administradores pueden acceder a esta página.")
+            raise forms.ValidationError(
+                "Solo los administradores pueden acceder a esta página.")
 
 
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
-    fnac = forms.DateInput(format=('%Y-%m-%d'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
+    password2 = forms.CharField(
+        label='Confirmar contraseña', widget=forms.PasswordInput)
+    fnac = forms.DateInput(format=(
+        '%Y-%m-%d'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
     class Meta:
         model = Usuario
@@ -53,7 +56,9 @@ class UsuarioForm(forms.ModelForm):
 
 
 class UpdateUsuarioForm(forms.ModelForm):
-    fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class':'form-control', 'placeholder':'Select Date','type': 'date'})
+    fnac = forms.DateInput(format=(
+        '%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
+
     class Meta:
         model = Usuario
         fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
@@ -64,6 +69,9 @@ class ZapatillaForm(forms.ModelForm):
         model = Zapatilla
         fields = ['marca', 'modelo', 'precio',
                   'categoria', 'descripcion', 'foto']
+        widgets = {
+            'categoria': forms.CheckboxSelectMultiple(),
+        }
 
     def __init__(self, *args, **kwargs):
         super(ZapatillaForm, self).__init__(*args, **kwargs)
@@ -75,7 +83,8 @@ class ZapatillaForm(forms.ModelForm):
 class StockZapatillaForm(forms.ModelForm):
     class Meta:
         model = StockZapatilla
-        fields = ['zapatilla', 'talla', 'cantidad']
+        fields = ['talla', 'cantidad']
+        exclude = ['zapatilla']
 
     def __init__(self, *args, **kwargs):
         super(StockZapatillaForm, self).__init__(*args, **kwargs)
@@ -87,7 +96,16 @@ class StockZapatillaForm(forms.ModelForm):
 class PedidoForm(forms.ModelForm):
     class Meta:
         model = Pedido
-        fields = ['cliente', 'direccion', 'estado']
+        fields = ['estado']
+        widgets = {
+            'estado': forms.Select(choices=Pedido.ESTADO_CHOICES),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Guardar Cambios'))
 
 
 class PedidoZapatillaForm(forms.ModelForm):
@@ -96,5 +114,15 @@ class PedidoZapatillaForm(forms.ModelForm):
         fields = ['zapatilla',  'cantidad']
 
 
-PedidoZapatillaFormSet = forms.inlineformset_factory(
-    Pedido, PedidoZapatilla, form=PedidoZapatillaForm, extra=1)
+class PedidoEstadoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['estado']
+        widgets = {
+            'estado': forms.Select(choices=Pedido.ESTADO_CHOICES, attrs={'class': 'form-control'}),
+        }
+
+
+PedidoZapatillaFormSet = modelformset_factory(
+    PedidoZapatilla, form=PedidoZapatillaForm, extra=1
+)

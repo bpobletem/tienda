@@ -9,15 +9,14 @@
         <div class="form-group">
             {{ form|crispy }}
         </div>
-        <h4>Zapatillas en el Pedido</h4>
-        <div class="form-group">
-            {{ formset.management_form }}
-            {% for form in formset %}
-                {{ form|crispy }}
-            {% endfor %}
-        </div>
-        <a class="btn btn-outline-primary" href='{% url "listaPedidos" %}' >Volver</a>
-        <button type="submit" class="btn btn-primary">Crear Pedido</button>
+        <h4>Productos</h4>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Guardar Pedido</button>
     </form>
 </div>
 {% endblock %}
