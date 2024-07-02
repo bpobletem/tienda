@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import *
 
+
 class CustomUserAdmin(UserAdmin):
     model = Usuario
     list_display = ('correo', 'nombre', 'apellido', 'is_staff', 'is_active')
@@ -14,16 +15,20 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('correo', 'nombre', 'apellido', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
+         ),
     )
     search_fields = ('correo',)
     ordering = ('correo',)
 
+
 admin.site.register(Usuario, CustomUserAdmin)
 
+
 class AdmUsuario(admin.ModelAdmin):
-    list_display = ['rut', 'nombre', 'apellido','contrasenia', 'correo', 'fnac']
+    list_display = ['rut', 'nombre', 'apellido',
+                    'contrasenia', 'correo', 'fnac']
     list_editable = ['nombre', 'apellido', 'fnac', 'contrasenia', 'correo']
+
 
 class AdmZapatilla(admin.ModelAdmin):
     list_display = ['id', 'marca', 'modelo', 'precio', 'descripcion']
@@ -39,25 +44,31 @@ class AdmMarca(admin.ModelAdmin):
     list_display = ['id', 'nombre']
     list_editable = ['nombre']
 
+
 class AdmPedido(admin.ModelAdmin):
-    list_display = ['id', 'fecha', 'estado']
+    list_display = ['id', 'fecha', 'cliente', 'direccion', 'estado', 'total']
+
 
 class AdmCategoria(admin.ModelAdmin):
     list_display = ['id', 'nombre']
     list_editable = ['nombre']
 
+
 class AdmPedidoZapatilla(admin.ModelAdmin):
     list_display = ['id', 'pedido', 'zapatilla', 'cantidad']
 
+
 class AdmAdministrador(admin.ModelAdmin):
-    list_display = ['rut', 'nombre', 'apellido','contrasenia', 'correo']
-    list_editable = ['nombre', 'apellido','contrasenia', 'correo']
+    list_display = ['rut', 'nombre', 'apellido', 'contrasenia', 'correo']
+    list_editable = ['nombre', 'apellido', 'contrasenia', 'correo']
+
 
 class AdmStockZapatillas(admin.ModelAdmin):
-    list_display= ['id', 'zapatilla','talla','cantidad']
-    list_editable= ['zapatilla','talla','cantidad']
+    list_display = ['id', 'zapatilla', 'talla', 'cantidad']
+    list_editable = ['zapatilla', 'talla', 'cantidad']
     list_display_links = ['id']
-    
+
+
 # Register your models here.
 admin.site.register(Zapatilla, AdmZapatilla)
 admin.site.register(Direccion, AdmDireccion)

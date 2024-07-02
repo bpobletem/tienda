@@ -1,0 +1,39 @@
+{% extends "aplicacion/baseadmin.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between">
+        <h3>Lista de Pedidos</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                    <tr>
+                        <td>{{ pedido.id }}</td>
+                        <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+                        <td>{{ pedido.fecha }}</td>
+                        <td>{{ pedido.get_estado_display }}</td>
+                        <td>${{ pedido.total }}</td>
+                        <td>
+                            <a href="{% url 'detallePedido' pedido.id %}" class="btn btn-info">Detalle</a>
+                            <a href="{% url 'editarPedido' pedido.id %}" class="btn btn-primary">Editar</a>
+                            <a href="{% url 'eliminarPedido' pedido.id %}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

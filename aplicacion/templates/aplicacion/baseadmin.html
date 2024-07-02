@@ -30,17 +30,17 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url "admin" %}">Productos</a>
+                        <a class="nav-link" aria-current="page" href="{% url "administrador" %}">Productos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url "totalpedidos" %}">Pedidos</a>
-                    </li>
+                        <a class="nav-link" aria-current="page" href="{% url "listaPedidos" %}">Pedidos</a>
+                    </li>              
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url "totalusuarios" %}">Usuarios</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url "index" %}">Panel cliente</a>
-                    </li>            
+                    </li> 
             </div>
         </div>
     </nav>
@@ -62,6 +62,44 @@
             </div>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {% if messages %}
+        {% for m in messages %}
+            <script>
+                var title = ''
+                var icon = ''
+                
+                {% if 'success' in m.tags %}
+                    title = "¡Operación exitosa!";
+                    icon = 'success';
+                {% elif 'info' in m.tags %}
+                    title = "Información";
+                    icon = 'info';
+                {% elif 'warning' in m.tags %}
+                    title = "Advertencia";
+                    icon = 'warning';
+                {% elif 'error' in m.tags %}
+                    title = "Error";
+                    icon = 'error';
+                {% else %}
+                    title = "Mensaje";
+                    icon = 'info';
+                {% endif %}
+
+                Swal.fire({
+                    title: title,
+                    text: "{{m}}",
+                    icon: icon
+                  });
+
+            </script>
+        {% endfor %}
+    {% endif %}
+
+
     <script src="{% static "aplicacion/bootstrap-5.3.3-dist/js/bootstrap.bundle.js" %}"></script>
+    
 </body>
 </html>
