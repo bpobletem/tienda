@@ -46,12 +46,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     correo = models.EmailField(unique=True, max_length=254)
-    fnac = models.DateField(
-        verbose_name="Fecha de Nacimiento", default='1950-01-01')
+    fnac = models.DateField(verbose_name="Fecha de Nacimiento", default='1950-01-01')
     direcciones = models.ManyToManyField('Direccion', blank=True)
-    telefono = models.CharField(max_length=15, default='0000000000')
+    telefono = models.CharField(max_length=15, default='900000000')
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False) 
+    is_superuser = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 

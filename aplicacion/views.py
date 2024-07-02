@@ -24,20 +24,23 @@ def admin_required(view_func):
     return actual_decorator(view_func)
 
 
+
 def search_results(request):
-    query = request.GET.get('query')
+    query = request.GET.get('query', '')
     results = []
+    paginator = None
     page = request.GET.get('page', 1)
 
     if query:
         results = Zapatilla.objects.filter(
             Q(modelo__icontains=query) | Q(marca__nombre__icontains=query)
-        )
+        ).order_by('modelo')
 
+        paginator = Paginator(results, 5)  # Muestra 5 productos por página
+        
         try:
-            paginator = Paginator(results, 5)
             results = paginator.page(page)
-        except:
+        except Exception as e:
             raise Http404
 
     data = {
