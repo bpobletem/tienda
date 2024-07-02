@@ -659,6 +659,7 @@ def eliminarCarrito(request, id_item):
         # Verifica si el carrito_item_id está en el carrito
         if carrito_item_id in carrito:
             del carrito[carrito_item_id]
+            messages.success(request, 'Item eliminado del carrito con exito')
             request.session['carrito'] = carrito
             request.session.modified = True
 
