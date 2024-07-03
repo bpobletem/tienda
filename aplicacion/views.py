@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
-                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion, )
+                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion, Marca )
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import (UsuarioForm, DireccionForm, ZapatillaForm,
@@ -200,22 +200,26 @@ def anadir(request):
     if request.method == 'POST':
         zapatilla_form = ZapatillaForm(request.POST, request.FILES)
         stock_form = StockZapatillaForm(request.POST)
+
         if zapatilla_form.is_valid() and stock_form.is_valid():
-            zapatilla = zapatilla_form.save()
+            marca_nombre = zapatilla_form.cleaned_data.get('marca')
+            marca, created = Marca.objects.get_or_create(nombre=marca_nombre)
+
+            zapatilla = zapatilla_form.save(commit=False)
+            zapatilla.marca = marca
+            zapatilla.save()
+
             stock = stock_form.save(commit=False)
             stock.zapatilla = zapatilla
             stock.save()
+
+            messages.success(request, 'Producto agregado correctamente')
             return redirect('administrador')
     else:
         zapatilla_form = ZapatillaForm()
         stock_form = StockZapatillaForm()
 
-    datos = {
-        'zapatilla_form': zapatilla_form,
-        'stock_form': stock_form
-    }
-    return render(request, 'aplicacion/anadir.html', datos)
-
+    return render(request, 'aplicacion/anadir.html', {'zapatilla_form': zapatilla_form, 'stock_form': stock_form})
 
 def eliminarProducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
@@ -224,6 +228,7 @@ def eliminarProducto(request, id):
         # Redirige a la página del administrador después de eliminar
         return redirect('administrador')
     return render(request, 'aplicacion/eliminar_producto.html', {'zapatilla': zapatilla})
+
 
 
 def marca(request, id):
@@ -671,56 +676,39 @@ def eliminarCarrito(request, id_item):
 
 @login_required
 def confirmarCompra(request):
-    if request.method == 'POST':
-        carrito = request.session.get('carrito', {})
-        if not carrito:
-            return redirect('carrito')
+    carrito = request.session.get('carrito', {})
+    if not carrito:
+        return redirect('carrito')
 
-        usuario = request.user
-        direccion_id = request.POST.get('direccion')
-        direccion = get_object_or_404(Direccion, id=direccion_id, usuario=usuario)
+    usuario = request.user  # Asegúrate de que el usuario esté autenticado
+    direccion = usuario.direcciones.first()  # Usa la primera dirección del usuario o ajusta según tu lógica
 
-        total = 0
-        items_validos = []
+    if not direccion:
+        messages.error(request, 'No tienes una dirección asociada a tu cuenta.')
+        return redirect('carrito')
 
-        # Verificar stock sin crear el pedido
-        for item_id, item_info in carrito.items():
-            zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
-            stock = get_object_or_404(
-                StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
+    pedido = Pedido.objects.create(cliente=usuario, direccion=direccion)
 
-            if stock.cantidad >= item_info['cantidad']:
-                items_validos.append((zapatilla, stock, item_info['cantidad']))
-                total += zapatilla.precio * item_info['cantidad']
-            else:
-                messages.error(
-                    request, f'No hay suficiente stock de {zapatilla.modelo} en talla {item_info["talla"]}.')
-                return redirect('carrito')
+    for item_id, item_info in carrito.items():
+        zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
+        stock = get_object_or_404(StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
 
-        # Crear el pedido solo si todos los items son válidos
-        pedido = Pedido.objects.create(
-            cliente=usuario,
-            direccion=direccion,
-            estado='P',
-            total=total,
-        )
-
-        # Procesar los items válidos
-        for zapatilla, stock, cantidad in items_validos:
-            stock.cantidad -= cantidad
+        if stock.cantidad >= item_info['cantidad']:
+            stock.cantidad -= item_info['cantidad']
             stock.save()
 
             PedidoZapatilla.objects.create(
                 pedido=pedido,
                 zapatilla=zapatilla,
-                cantidad=cantidad
+                cantidad=item_info['cantidad'],
+                talla=float(item_info['talla'])
             )
+        else:
+            messages.error(request, f"No hay suficiente stock para la zapatilla {zapatilla.modelo} en talla {item_info['talla']}.")
+            return redirect('carrito')
 
-        # Vaciar el carrito después de confirmar la compra
-        request.session['carrito'] = {}
-        request.session.modified = True
-
-        messages.success(request, 'Gracias por tu compra')
-        return render(request, 'aplicacion/compraconfirmada.html', {'pedido': pedido})
-
-    return redirect('carrito')
+    # Vaciar el carrito después de confirmar la compra
+    request.session['carrito'] = {}
+    request.session.modified = True
+    messages.success(request, 'Gracias por tu compra')
+    return render(request, 'aplicacion/compraconfirmada.html')

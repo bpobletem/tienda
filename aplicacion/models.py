@@ -80,7 +80,7 @@ class Categoria(models.Model):
 
 
 class Zapatilla(models.Model):
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
+    marca = models.CharField(max_length=100)
     modelo = models.CharField(max_length=50, null=False)
     precio = models.IntegerField(null=False)
     categoria = models.ManyToManyField(Categoria)
@@ -143,9 +143,10 @@ class PedidoZapatilla(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
+    talla = models.DecimalField(decimal_places=1, max_digits=3, default=1.0)  
 
     def __str__(self):
-        return f"Pedido {self.pedido.id} - {self.zapatilla.modelo} (Cantidad: {self.cantidad})"
+        return f"Pedido {self.pedido.id} - {self.zapatilla.modelo} (Cantidad: {self.cantidad}, Talla: {self.talla})"
 
 
 class Administrador(models.Model):

@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from django.forms import modelformset_factory
-from .models import Usuario, Direccion, Zapatilla, StockZapatilla, Pedido, PedidoZapatilla
+from .models import Usuario, Direccion, Zapatilla,Marca, StockZapatilla, Pedido, PedidoZapatilla
 from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -66,10 +66,11 @@ class UpdateUsuarioForm(forms.ModelForm):
 
 
 class ZapatillaForm(forms.ModelForm):
+    marca = forms.CharField(max_length=100, label='Marca')
+
     class Meta:
         model = Zapatilla
-        fields = ['marca', 'modelo', 'precio',
-                  'categoria', 'descripcion', 'foto']
+        fields = ['marca', 'modelo', 'precio', 'categoria', 'descripcion', 'foto']
         widgets = {
             'categoria': forms.CheckboxSelectMultiple(),
         }
