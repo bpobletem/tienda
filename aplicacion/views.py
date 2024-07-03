@@ -487,18 +487,14 @@ def eliminarUsuario(request, rut):
 
     if request.method == 'POST':
         # Eliminar todos los pedidos asociados al usuario
-        pedidos = Pedido.objects.filter(cliente=usuario)
-        for pedido in pedidos:
-            pedido.delete()
-
-        # Eliminar todas las direcciones asociadas al usuario
-        usuario.direcciones.clear()
-
-        # Eliminar el usuario
-        usuario.delete()
-        messages.success(request, 'Usuario eliminado con exito')
-        return redirect('totalusuarios')
-
+        try:
+            # Eliminar el usuario
+            usuario.delete()
+            messages.success(request, 'Usuario eliminado con exito')
+            return redirect('totalusuarios')
+        except Exception as ex:
+            messages.error(request,'No se puede eliminar')
+            return redirect('totalusuarios')
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
 

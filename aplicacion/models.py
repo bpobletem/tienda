@@ -119,8 +119,8 @@ class ItemCarrito(models.Model):
 
 
 class Pedido(models.Model):
-    cliente = models.ForeignKey('Usuario', on_delete=models.CASCADE)
-    direccion = models.ForeignKey('Direccion', on_delete=models.CASCADE)
+    cliente = models.ForeignKey('Usuario', on_delete=models.PROTECT)
+    direccion = models.ForeignKey('Direccion', on_delete=models.PROTECT)
 
     # Definir opciones para el campo estado
     ESTADO_CHOICES = (
