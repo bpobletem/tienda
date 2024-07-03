@@ -44,17 +44,18 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{% url "index" %}">Inicio</a>
                     </li>
+                    <!--
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Marcas
                         </a>
-                        <ul class="dropdown-menu">
+                         <ul class="dropdown-menu">
                             {% for marca in marcas %}
                                 <li><a class="dropdown-item" href="{% url 'marca' marca.id %}">{{ marca.nombre }}</a></li>
                             {% endfor %}
-                        </ul>
-                    </li>
+                        </ul> 
+                    </li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -71,14 +72,7 @@
                     </li>
                 </ul>
 
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item d-flex mx-auto">
-                        <form class="d-flex" method="get" action="{% url 'search_results' %}">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Buscar zapatillas" aria-label="Buscar" name="query">
-                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Buscar</button>
-                        </form>
-                    </li>
-                </ul>
+                
 
 
                 <ul class="navbar-nav me-5 mb-2 mb-lg-0 d-flex flex-row align-items-center gap-3">

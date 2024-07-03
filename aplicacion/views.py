@@ -53,9 +53,8 @@ def search_results(request):
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by(
         '-id')[:9]  # ultimos 9 productos
-    nike_marca = Marca.objects.get(nombre="Nike")
-    productos_nike = Zapatilla.objects.filter(marca=nike_marca).order_by('id')[
-        :9]  # ultimos 9 productos NIKE
+    productos_nike = Zapatilla.objects.filter(marca='Nike').order_by('id')[:9]
+
 
     data = {
         'productos_nuevos': productos_nuevos,
@@ -144,12 +143,12 @@ def adminpedido(request):
 PedidoZapatillaFormSet = modelformset_factory(
     PedidoZapatilla, fields=('zapatilla', 'cantidad'), extra=0)
 
-
+@admin_required
 def listaPedidos(request):
     pedidos = Pedido.objects.all()
     return render(request, 'aplicacion/listaPedidos.html', {'pedidos': pedidos})
 
-
+@admin_required
 def crearPedido(request):
     if request.method == 'POST':
         form = PedidoForm(request.POST)
@@ -165,7 +164,7 @@ def crearPedido(request):
         formset = PedidoZapatillaFormSet()
     return render(request, 'aplicacion/crearPedido.html', {'form': form, 'formset': formset})
 
-
+@admin_required
 def editarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
     zapatillas_pedido = PedidoZapatilla.objects.filter(pedido=pedido)
@@ -180,7 +179,7 @@ def editarPedido(request, pk):
 
     return render(request, 'aplicacion/editarPedido.html', {'form': form, 'zapatillas_pedido': zapatillas_pedido})
 
-
+@admin_required
 def eliminarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
     if request.method == 'POST':
@@ -189,7 +188,7 @@ def eliminarPedido(request, pk):
         return redirect('listaPedidos')
     return render(request, 'aplicacion/eliminarPedido.html', {'pedido': pedido})
 
-
+@admin_required
 def detallePedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
     return render(request, 'aplicacion/detallePedido.html', {'pedido': pedido})
@@ -221,6 +220,7 @@ def anadir(request):
 
     return render(request, 'aplicacion/anadir.html', {'zapatilla_form': zapatilla_form, 'stock_form': stock_form})
 
+@admin_required
 def eliminarProducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     if request.method == 'POST':
@@ -232,7 +232,7 @@ def eliminarProducto(request, id):
 
 
 def marca(request, id):
-    marca = get_object_or_404(Marca, id=id)
+    marca = 'Nike'
     zapatillas = Zapatilla.objects.filter(marca=marca).order_by('modelo')
     page = request.GET.get('page', 1)
 
@@ -688,25 +688,30 @@ def confirmarCompra(request):
         return redirect('carrito')
 
     pedido = Pedido.objects.create(cliente=usuario, direccion=direccion)
-
+    subtotal=0
     for item_id, item_info in carrito.items():
         zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
         stock = get_object_or_404(StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
 
+        
         if stock.cantidad >= item_info['cantidad']:
             stock.cantidad -= item_info['cantidad']
+            cantidad = item_info['cantidad']
             stock.save()
 
             PedidoZapatilla.objects.create(
                 pedido=pedido,
                 zapatilla=zapatilla,
                 cantidad=item_info['cantidad'],
-                talla=float(item_info['talla'])
+                talla=float(item_info['talla']),
             )
+            subtotal = subtotal + zapatilla.precio * cantidad
         else:
             messages.error(request, f"No hay suficiente stock para la zapatilla {zapatilla.modelo} en talla {item_info['talla']}.")
             return redirect('carrito')
 
+        pedido.total = subtotal
+        pedido.save()
     # Vaciar el carrito después de confirmar la compra
     request.session['carrito'] = {}
     request.session.modified = True
