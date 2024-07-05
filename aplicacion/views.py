@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
-                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion, Marca )
+                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion,  )
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import (UsuarioForm, DireccionForm, ZapatillaForm,
@@ -53,12 +53,12 @@ def search_results(request):
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by(
         '-id')[:9]  # ultimos 9 productos
-    productos_nike = Zapatilla.objects.filter(marca='Nike').order_by('id')[:9]
+    
 
 
     data = {
         'productos_nuevos': productos_nuevos,
-        'productos_nike': productos_nike
+        
     }
     return render(request, 'aplicacion/index.html', data)
 
@@ -201,13 +201,7 @@ def anadir(request):
         stock_form = StockZapatillaForm(request.POST)
 
         if zapatilla_form.is_valid() and stock_form.is_valid():
-            marca_nombre = zapatilla_form.cleaned_data.get('marca')
-            marca, created = Marca.objects.get_or_create(nombre=marca_nombre)
-
-            zapatilla = zapatilla_form.save(commit=False)
-            zapatilla.marca = marca
-            zapatilla.save()
-
+            zapatilla = zapatilla_form.save()
             stock = stock_form.save(commit=False)
             stock.zapatilla = zapatilla
             stock.save()
@@ -217,8 +211,11 @@ def anadir(request):
     else:
         zapatilla_form = ZapatillaForm()
         stock_form = StockZapatillaForm()
-
-    return render(request, 'aplicacion/anadir.html', {'zapatilla_form': zapatilla_form, 'stock_form': stock_form})
+        datos = {
+        'zapatilla_form': zapatilla_form,
+        'stock_form': stock_form
+    }
+    return render(request, 'aplicacion/anadir.html', datos)
 
 @admin_required
 def eliminarProducto(request, id):
@@ -232,7 +229,7 @@ def eliminarProducto(request, id):
 
 
 def marca(request, id):
-    marca = 'Nike'
+    marca = get_object_or_404(Marca, id=id)
     zapatillas = Zapatilla.objects.filter(marca=marca).order_by('modelo')
     page = request.GET.get('page', 1)
 
@@ -274,7 +271,7 @@ def categoria(request, id):
 @login_required
 def direcciones(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
-    direcciones = usuario.direcciones.all()
+    direcciones = usuario.direccion.all()
     data = {
         'usuario': usuario,
         'direcciones': direcciones,

@@ -5,12 +5,10 @@ from django.utils import timezone
 
 # Create your models here.
 
-
 class Direccion(models.Model):
     calle = models.CharField(max_length=255, null=False)
     numero = models.IntegerField(null=False)
-    detalle = models.CharField(
-        max_length=255, null=True, verbose_name="Detalle o Departamento")
+    detalle = models.CharField(max_length=255, null=True, verbose_name="Detalle o Departamento")
     comuna = models.CharField(max_length=255, null=False)
     region = models.CharField(max_length=255, null=False)
 
@@ -25,8 +23,7 @@ class UsuarioManager(BaseUserManager):
         if not rut:
             raise ValueError('El RUT es obligatorio')
         correo = self.normalize_email(correo)
-        user = self.model(correo=correo, nombre=nombre,
-                          apellido=apellido, rut=rut, **extra_fields)
+        user = self.model(correo=correo, nombre=nombre, apellido=apellido, rut=rut, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -45,42 +42,40 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     rut = models.CharField(max_length=10, unique=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
-    correo = models.EmailField(unique=True, max_length=254)
-    fnac = models.DateField(verbose_name="Fecha de Nacimiento", default='1950-01-01')
-    direcciones = models.ManyToManyField('Direccion', blank=True)
-    telefono = models.CharField(max_length=15, default='900000000')
+    correo = models.EmailField(unique=True)
+    direccion = models.ForeignKey(Direccion, on_delete=models.SET_NULL, null=True, blank=True)
+    telefono = models.CharField(max_length=15, null=True, blank=True)
+    fnac = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False) 
-    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     objects = UsuarioManager()
 
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['nombre', 'apellido', 'rut']
 
-    class Meta:
-        db_table = 'auth_user'
-
     def __str__(self):
-        return f"{self.rut} -- {self.nombre} {self.apellido}"
+        return f"{self.nombre} {self.apellido} ({self.rut})"
 
 
 class Marca(models.Model):
-    nombre = models.CharField(max_length=50, null=False)
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.nombre}"
+        return self.nombre
 
 
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=50, null=False)
+    nombre = models.CharField(max_length=50, unique=True)
+    descripcion = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.nombre}"
+        return self.nombre
 
 
 class Zapatilla(models.Model):
-    marca = models.CharField(max_length=100)
+    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
     modelo = models.CharField(max_length=50, null=False)
     precio = models.IntegerField(null=False)
     categoria = models.ManyToManyField(Categoria)
@@ -89,16 +84,17 @@ class Zapatilla(models.Model):
 
     def __str__(self):
         return f"{self.marca} -- {self.modelo}"
-
-
+    
 class StockZapatilla(models.Model):
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     talla = models.DecimalField(decimal_places=1, max_digits=3, null=False)
     cantidad = models.IntegerField(null=False, default=0)
 
 
+
 class Carrito(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    zapatilla = models.ManyToManyField(Zapatilla, through='ItemCarrito')
 
     def __str__(self):
         return f"Carrito de {self.usuario}"
@@ -108,8 +104,7 @@ class ItemCarrito(models.Model):
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    fecha = models.DateTimeField(
-        auto_now_add=True, null=True)  # Hay que sacar el null
+    fecha = models.DateTimeField(auto_now_add=True, null=True)  # Hay que sacar el null
 
     def __str__(self):
         return f"{self.cantidad} - {self.zapatilla.modelo}"
@@ -129,8 +124,7 @@ class Pedido(models.Model):
         ('F', 'Finalizado'),
         # Puedes agregar más opciones según sea necesario
     )
-    estado = models.CharField(
-        max_length=1, choices=ESTADO_CHOICES, default='P')
+    estado = models.CharField(max_length=1, choices=ESTADO_CHOICES, default='P')
 
     fecha = models.DateTimeField(default=timezone.now)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -143,7 +137,7 @@ class PedidoZapatilla(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    talla = models.DecimalField(decimal_places=1, max_digits=3, default=1.0)  
+    talla = models.DecimalField(decimal_places=1, max_digits=3, default=1.0)
 
     def __str__(self):
         return f"Pedido {self.pedido.id} - {self.zapatilla.modelo} (Cantidad: {self.cantidad}, Talla: {self.talla})"
