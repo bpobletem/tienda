@@ -145,8 +145,19 @@ PedidoZapatillaFormSet = modelformset_factory(
 
 @admin_required
 def listaPedidos(request):
-    pedidos = Pedido.objects.all()
-    return render(request, 'aplicacion/listaPedidos.html', {'pedidos': pedidos})
+    pedidos = Pedido.objects.order_by('-fecha')
+    page = request.GET.get('page', 1)
+
+    try:
+        paginator = Paginator(pedidos, 5)
+        pedidos = paginator.page(page)
+    except:
+        raise Http404
+
+    datos = {'entity': pedidos,  # ENTITY ES NECESARIO PARA EL PAGINADOR
+             'paginator': paginator}
+
+    return render(request, 'aplicacion/listaPedidos.html', datos)
 
 @admin_required
 def crearPedido(request):
@@ -222,7 +233,7 @@ def eliminarProducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     if request.method == 'POST':
         zapatilla.delete()
-        # Redirige a la página del administrador después de eliminar
+        messages.success(request,'Zapatilla eliminada correctamente')
         return redirect('administrador')
     return render(request, 'aplicacion/eliminar_producto.html', {'zapatilla': zapatilla})
 
@@ -356,7 +367,7 @@ def loginAdmin(request):
 
     return render(request, 'aplicacion/loginAdmin.html', data)
 
-
+@login_required
 def pedidos(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
     pedidos = Pedido.objects.filter(cliente=usuario)
@@ -414,25 +425,8 @@ def registro(request):
 
 
 @admin_required
-def totalpedidos(request):
-    pedidos = Pedido.objects.order_by('-fecha')
-    page = request.GET.get('page', 1)
-
-    try:
-        paginator = Paginator(pedidos, 5)
-        pedidos = paginator.page(page)
-    except:
-        raise Http404
-
-    datos = {'entity': pedidos,  # ENTITY ES NECESARIO PARA EL PAGINADOR
-             'paginator': paginator}
-
-    return render(request, 'aplicacion/totalpedidos.html', datos)
-
-
-@admin_required
 def totalusuarios(request):
-    usuarios = Usuario.objects.order_by('-rut')
+    usuarios = Usuario.objects.filter(is_superuser=False).order_by('-rut')
     page = request.GET.get('page', 1)
 
     try:

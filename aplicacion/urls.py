@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import (index, producto, administrador, detalleproducto, loginAdmin,
                     adminpedido, anadir, categoria, direcciones, editar, editarusuarios, pedidos,
-                    perfil, recuperar, registro, totalpedidos, totalusuarios, usuarios, carrito, marca,
+                    perfil, recuperar, registro, totalusuarios, usuarios, carrito, marca,
                     agregarCarrito, eliminarCarrito, confirmarCompra, agregarUsuario, eliminarUsuario,
                     direccionesusuario, eliminardireccion, editardirecciones, agregardireccion, listaPedidos,
                     crearPedido, editarPedido, eliminarPedido, detallePedido,
@@ -42,7 +42,6 @@ urlpatterns = [
     path('perfil/<str:rut>', perfil, name='perfil'),
     path('recuperar/', recuperar, name='recuperar'),
     path('registro/', registro, name='registro'),
-    path('totalpedidos/', totalpedidos, name='totalpedidos'),
     path('totalusuarios/', totalusuarios, name='totalusuarios'),
     path('carrito/', carrito, name='carrito'),
     path('carrito/<int:id_zapatilla>/', agregarCarrito, name='agregarCarrito'),

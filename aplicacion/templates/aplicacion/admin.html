@@ -62,15 +62,4 @@
     <div>
         {% include "aplicacion/paginator.html" %}
     </div>
-    
-    <script>
-        // Puedes añadir confirmación antes de eliminar si lo deseas
-        document.querySelectorAll('.btn.btn-danger').forEach(item => {
-            item.addEventListener('click', function(event) {
-                if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
 {% endblock content %}

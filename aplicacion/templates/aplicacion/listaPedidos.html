@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between">
-        <h3>Lista de Pedidos</h3>
+        <h3>Lista de pedidos</h3>
     </div>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -18,22 +18,31 @@
                 </tr>
             </thead>
             <tbody>
-                {% for pedido in pedidos %}
-                    <tr>
-                        <td>{{ pedido.id }}</td>
-                        <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
-                        <td>{{ pedido.fecha }}</td>
-                        <td>{{ pedido.get_estado_display }}</td>
-                        <td>${{ pedido.total }}</td>
-                        <td>
-                            <a href="{% url 'detallePedido' pedido.id %}" class="btn btn-info">Detalle</a>
-                            <a href="{% url 'editarPedido' pedido.id %}" class="btn btn-primary">Editar</a>
-                            <a href="{% url 'eliminarPedido' pedido.id %}" class="btn btn-danger">Eliminar</a>
-                        </td>
-                    </tr>
+                {% if entity %}
+                
+                {% for pedido in entity %}
+                <tr>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+                    <td>{{ pedido.fecha }}</td>
+                    <td>{{ pedido.get_estado_display }}</td>
+                    <td>${{ pedido.total }}</td>
+                    <td>
+                        <a href="{% url 'detallePedido' pedido.id %}" class="btn btn-info">Detalle</a>
+                        <a href="{% url 'editarPedido' pedido.id %}" class="btn btn-primary">Editar</a>
+                    </td>
+                </tr>
                 {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center">No hay pedidos para mostrar</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
+</div>
+<div>
+    {% include "aplicacion/paginator.html" %}
 </div>
 {% endblock %}

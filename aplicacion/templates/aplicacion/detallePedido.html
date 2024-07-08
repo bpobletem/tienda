@@ -5,19 +5,19 @@
     <h3>Detalle del Pedido #{{ pedido.id }}</h3>
     <div class="card">
         <div class="card-header">
-            Pedido realizado por: {{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}
+            Pedido realizado por: {{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }} - {{ pedido.cliente.rut }}
         </div>
         <div class="card-body">
-            <h5 class="card-title">Fecha: {{ pedido.fecha }}</h5>
+            <p class="card-text"><strong>Fecha:</strong> {{ pedido.fecha }}</p>
             <p class="card-text"><strong>Dirección de envío:</strong> {{ pedido.direccion }}</p>
             <p class="card-text"><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
             <p class="card-text"><strong>Total:</strong> ${{ pedido.total }}</p>
-            <hr>
-            <h5 class="card-title">Zapatillas en el pedido:</h5>
+            <hr class='mt-3'>
+            <h5 class="card-title mt-3">Zapatillas en el pedido:</h5>
             <ul class="list-group list-group-flush">
                 {% for item in pedido.pedidozapatilla_set.all %}
                     <li class="list-group-item">
-                        {{ item.zapatilla.marca }} {{ item.zapatilla.modelo }} - Talla: {{ item.talla }} - Cantidad: {{ item.cantidad }} - Precio Total: ${{ item.cantidad|mul:item.zapatilla.precio }}
+                        {{ item.zapatilla.marca }} {{ item.zapatilla.modelo }} - Talla: {{ item.talla }} - Cantidad: {{ item.cantidad }} - Subtotal: ${{ item.cantidad|mul:item.zapatilla.precio }}
                     </li>
                 {% endfor %}
             </ul>
@@ -25,7 +25,6 @@
     </div>
     <div class="mt-3">
         <a href="{% url 'editarPedido' pedido.pk %}" class="btn btn-primary">Editar Pedido</a>
-        <a href="{% url 'eliminarPedido' pedido.pk %}" class="btn btn-danger">Eliminar Pedido</a>
         <a href="{% url 'listaPedidos' %}" class="btn btn-secondary">Volver a la Lista de Pedidos</a>
     </div>
 </div>

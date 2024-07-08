@@ -77,7 +77,7 @@ class Categoria(models.Model):
 class Zapatilla(models.Model):
     marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
     modelo = models.CharField(max_length=50, null=False)
-    precio = models.IntegerField(null=False)
+    precio = models.IntegerField(validators=[MinValueValidator(20000), MaxValueValidator(500000)],null=False)
     categoria = models.ManyToManyField(Categoria)
     descripcion = models.CharField(max_length=500, null=False)
     foto = models.ImageField(upload_to='zapatillas')
@@ -122,7 +122,7 @@ class Pedido(models.Model):
         ('P', 'Pendiente'),
         ('E', 'En proceso'),
         ('F', 'Finalizado'),
-        # Puedes agregar más opciones según sea necesario
+        ('C', 'Cancelado'),
     )
     estado = models.CharField(max_length=1, choices=ESTADO_CHOICES, default='P')
 
