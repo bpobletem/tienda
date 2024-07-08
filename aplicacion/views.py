@@ -271,7 +271,7 @@ def categoria(request, id):
 @login_required
 def direcciones(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
-    direcciones = usuario.direccion.all()
+    direcciones = usuario.direcciones.all()
     data = {
         'usuario': usuario,
         'direcciones': direcciones,

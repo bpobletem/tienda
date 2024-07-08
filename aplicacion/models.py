@@ -44,6 +44,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     apellido = models.CharField(max_length=50)
     correo = models.EmailField(unique=True)
     direccion = models.ForeignKey(Direccion, on_delete=models.SET_NULL, null=True, blank=True)
+    direcciones = models.ManyToManyField(Direccion, related_name='usuarios')
     telefono = models.CharField(max_length=15, null=True, blank=True)
     fnac = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
