@@ -72,6 +72,7 @@ class ZapatillaForm(forms.ModelForm):
                   'categoria', 'descripcion', 'foto']
         widgets = {
             'categoria': forms.CheckboxSelectMultiple(),
+            'descripcion' : forms.Textarea(attrs={'rows': 8, 'cols': 15}),
         }
 
     def __init__(self, *args, **kwargs):
