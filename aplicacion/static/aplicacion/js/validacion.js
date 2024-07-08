@@ -41,103 +41,110 @@ window.addEventListener('load', () => {
         const passFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/; //1 numero, 1 mayuscula, 1 minuscula min 6 caracteres
         const telefonoFormat = /^9\d{8}$/;
 
-        const rut = document.getElementById("id_rut").value.trim();
-        const nombre = document.getElementById("id_nombre").value.trim();
-        const apellidos = document.getElementById("id_apellido").value.trim();
-        const correo = document.getElementById("id_correo").value.trim();
-        const fecha_nacimiento = document.getElementById("id_fnac").value.trim();
-        const password = document.getElementById("id_password1").value.trim();
-        const confirm_password = document.getElementById("id_password2").value.trim();
-        const telefono = document.getElementById("id_telefono").value.trim();
+        const rut = document.getElementById("id_rut")
+        const nombre = document.getElementById("id_nombre")
+        const apellidos = document.getElementById("id_apellido")
+        const correo = document.getElementById("id_correo")
+        const fecha_nacimiento = document.getElementById("id_fnac")
+        const password = document.getElementById("id_password1")
+        const confirm_password = document.getElementById("id_password2")
+        const telefono = document.getElementById("id_telefono")
 
-        const direccion = document.getElementById("id_calle").value.trim();
-        const depto = document.getElementById("id_detalle").value.trim();
-        const region = document.getElementById("id_region").value.trim();
-        const comuna = document.getElementById("id_comuna").value.trim();
+        const direccion = document.getElementById("id_calle")
+        const depto = document.getElementById("id_detalle")
+        const region = document.getElementById("id_region")
+        const comuna = document.getElementById("id_comuna")
 
         // Reseteamos los errores
         mensajeError.innerHTML = "";
 
-        //Validacion campos completos
-        if (nombre === "" || apellidos === "" || rut === "" || direccion === "" || telefono === "" || correo === "" || password === "" || confirm_password === "" || fecha_nacimiento === "") {
-            mensajeError.innerHTML += "Por favor, complete todos los campos. <br>";
-            return false;
-        }
-
         //Validacion nombre
-        if (nombre.length < 2 || nombre.length > 50) {
+        if (nombre.value.trim().length < 2 || nombre.value.trim().length > 50) {
             mensajeError.innerHTML += `El nombre es muy corto.`;
-            nombre.classList.add()
+            nombre.classList.add("is-invalid");
             return false;
         }
 
         //Validacion apellido
-        if (apellidos.length < 2 || apellidos.length > 50) {
+        if (apellidos.value.trim().length < 2 || apellidos.value.trim().length > 50) {
             mensajeError.innerHTML += `El apellido es muy corto.`;
+            apellidos.classList.add("is-invalid");
             return false;
         }
 
-        if (!Fn.validaRut(rut)) {
+        if (!Fn.validaRut(rut.value.trim())) {
             mensajeError.innerHTML += `El RUT no es válido. Sin puntos y con guion.`;
+            rut.classList.add("is-invalid");
             return false;
         }
 
         //Validacion fecha de nacimiento
         const fechaHoy = new Date();
-        const fechaNacimiento = new Date(fecha_nacimiento);
+        const fechaNacimiento = new Date(fecha_nacimiento.value.trim());
 
         //Verificamos que exista la fecha
         if (!fecha_nacimiento) {
             mensajeError.innerHTML += `Por favor, seleccione su fecha de nacimiento.`;
+            fecha_nacimiento.classList.add("is-invalid");
             return false;
         }
         //Verificamos que no sea posterior a la fecha de hoy
         if (fechaNacimiento > fechaHoy) {
             mensajeError.innerHTML += `La fecha de nacimiento debe ser válida.`;
+            fecha_nacimiento.classList.add("is-invalid");
             return false;
         }
 
         //Validacion correo
-        if (!mailFormat.test(correo)) {
+        if (!mailFormat.test(correo.value.trim())) {
             mensajeError.innerHTML += `El correo no es válido.`;
+            correo.classList.add("is-invalid");
             return false;
         }
 
         //Validacion telefono solo 9 numeros
-        if (!telefonoFormat.test(telefono)) {
+        if (!telefonoFormat.test(telefono.value.trim())) {
             mensajeError.innerHTML += `El teléfono no es válido. Formato: 912345678`;
+            telefono.classList.add("is-invalid");
             return false;
         }
 
         //Validacion password segura
-        if (password.length < 6 || password.length > 50) {
+        if (password.value.trim().length < 6 || password.value.trim().length > 50) {
             mensajeError.innerHTML += `La contraseña debe tener al menos 6 caracteres y maximo 50`;
+            password.classList.add("is-invalid");
             return false;
         }
 
-        if (!passFormat.test(password)) {
+        if (!passFormat.test(password.value.trim())) {
             mensajeError.innerHTML += `La contraseña debe tener al menos un numero, una mayuscula y una minuscula`;
+            password.classList.add("is-invalid");
             return false;
         }
 
         //Validacion passwords coincidan
-        if (password !== confirm_password) {
+        if (password.value.trim() !== confirm_password.value.trim()) {
             mensajeError.innerHTML += `Las contraseñas no coinciden.`;
+            password.classList.add("is-invalid");
+            confirm_password.classList.add("is-invalid");
             return false;
         }
 
 
-        if (direccion.length < 4 || direccion.length > 50) {
+        if (direccion.value.trim().length < 4 || direccion.value.trim().length > 50) {
             mensajeError.innerHTML += `Ingrese una dirección valida.`
+            direccion.classList.add("is-invalid");
             return false;
         }
 
-        if (region === "") {
+        if (region.value.trim() === "") {
             mensajeError.innerHTML += "Por favor, seleccione una region";
+            region.classList.add("is-invalid");
         }
 
-        if (comuna === "") {
+        if (comuna.value.trim() === "") {
             mensajeError.innerHTML += "Por favor, seleccione una comuna";
+            comuna.classList.add("is-invalid");
         }
 
         //Submit del formulario en caso de pasar las validaciones

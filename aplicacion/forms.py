@@ -29,7 +29,7 @@ class AdminLoginForm(AuthenticationForm):
 
 
 class UsuarioForm(forms.ModelForm):
-    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput, help_text='Debe tener al menos una mayuscula, una minuscula y un numero')
     password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
     fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
