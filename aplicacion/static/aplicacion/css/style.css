@@ -78,6 +78,6 @@ a {
     cursor: pointer;
 }
 
-.mensaje-error {
+#mensajeError {
     color:red
 }

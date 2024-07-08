@@ -31,9 +31,10 @@
             <div class="col-12 col-md-9">
                 <div id="datos-personales" class="mb-4">
                     <h4 class="mb-3">Datos personales</h4>
-                    <form method="post" enctype="multipart/form-data">
+                    <form id="formulario" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form | crispy }}
+                        <p id=mensajeError></p>
                         <button class="btn btn-primary" type="submit">Guardar cambios</button>
                     </form>
                 </div>
@@ -41,5 +42,5 @@
         </div>
     </div>
 </section>
-
+<script src="{% static 'aplicacion/js/vdatosperfil.js' %}" ></script>
 {% endblock content %}

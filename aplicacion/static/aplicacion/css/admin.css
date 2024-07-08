@@ -48,8 +48,10 @@ form {
     margin: auto;
 }
 
-
-
 .login-form {
     max-width: 50%;
+}
+
+#mensajeError{
+    color: red;
 }
