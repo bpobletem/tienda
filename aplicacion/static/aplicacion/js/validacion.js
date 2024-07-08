@@ -93,19 +93,19 @@ window.addEventListener('load', () => {
         }
         //Verificamos que no sea posterior a la fecha de hoy
         if (fechaNacimiento > fechaHoy) {
-            mensajeError.innerHTML += `La fecha de nacimiento no puede ser posterior al día de hoy.`;
+            mensajeError.innerHTML += `La fecha de nacimiento debe ser válida.`;
             return false;
         }
 
         //Validacion correo
         if (!mailFormat.test(correo)) {
-            mensajeError.innerHTML += `El correo no es valido.`;
+            mensajeError.innerHTML += `El correo no es válido.`;
             return false;
         }
 
         //Validacion telefono solo 9 numeros
         if (!telefonoFormat.test(telefono)) {
-            mensajeError.innerHTML += `El telefono no es valido. Formato: 912345678`;
+            mensajeError.innerHTML += `El teléfono no es válido. Formato: 912345678`;
             return false;
         }
 
@@ -128,7 +128,7 @@ window.addEventListener('load', () => {
 
 
         if (direccion.length < 4 || direccion.length > 50) {
-            mensajeError.innerHTML += `Ingrese una direccion valida.`
+            mensajeError.innerHTML += `Ingrese una dirección valida.`
             return false;
         }
 
@@ -137,29 +137,10 @@ window.addEventListener('load', () => {
         }
 
         if (comuna === "") {
-            mensajeError.innerHTML += "Por favor, seleccione una region";
+            mensajeError.innerHTML += "Por favor, seleccione una comuna";
         }
 
         //Submit del formulario en caso de pasar las validaciones
         form.submit();
     }
 })
-
-
-    function showPass() {
-        var x = document.getElementById("password");
-        if (x.type === "password") {
-            x.type = "text";
-        } else {
-            x.type = "password";
-        }
-    }
-
-    function showConfirmPass() {
-        var x = document.getElementById("confirm_password");
-        if (x.type === "password") {
-            x.type = "text";
-        } else {
-            x.type = "password";
-        }
-    }

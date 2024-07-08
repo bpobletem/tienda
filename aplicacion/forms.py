@@ -31,11 +31,16 @@ class AdminLoginForm(AuthenticationForm):
 class UsuarioForm(forms.ModelForm):
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
-    fnac = forms.DateInput(format=('%Y-%m-%d'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
+    fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
     class Meta:
         model = Usuario
         fields = ['rut', 'nombre', 'apellido', 'correo', 'fnac', 'telefono']
+        help_texts = {
+            'rut': 'Sin puntos y con guión',
+            'telefono' : 'Debe partir con 9. Ej: 912345678',
+            'fnac' : 'DD/MM/AAAA'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -57,12 +62,15 @@ class UsuarioForm(forms.ModelForm):
         return user
 
 class UpdateUsuarioForm(forms.ModelForm):
-    fnac = forms.DateInput(format=(
-        '%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
+    fnac = forms.DateInput(format=('%d-%m-%Y'), attrs={'class': 'form-control', 'placeholder': 'Select Date', 'type': 'date'})
 
     class Meta:
         model = Usuario
         fields = ['nombre', 'apellido', 'correo', 'fnac', 'telefono']
+        help_texts = {
+            'telefono' : 'Debe partir con 9. Ej: 912345678',
+            'fnac' : 'DD/MM/AAAA'
+        }
 
 
 class ZapatillaForm(forms.ModelForm):

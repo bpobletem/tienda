@@ -45,7 +45,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     correo = models.EmailField(unique=True)
     direcciones = models.ManyToManyField(Direccion)
     telefono = models.CharField(max_length=15, null=True, blank=True)
-    fnac = models.DateField(null=True, blank=True)
+    fnac = models.DateField(verbose_name='Fecha de nacimiento')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -89,7 +89,6 @@ class StockZapatilla(models.Model):
     zapatilla = models.ForeignKey(Zapatilla, on_delete=models.CASCADE)
     talla = models.DecimalField(decimal_places=1, max_digits=3, null=False)
     cantidad = models.IntegerField(null=False, default=0)
-
 
 
 class Carrito(models.Model):

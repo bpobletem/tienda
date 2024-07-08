@@ -88,8 +88,7 @@ def editar(request, id):
         Zapatilla, StockZapatilla, form=StockZapatillaForm, extra=1, can_delete=True)
 
     if request.method == 'POST':
-        zapatilla_form = ZapatillaForm(
-            request.POST, request.FILES, instance=zapatilla)
+        zapatilla_form = ZapatillaForm(request.POST, request.FILES, instance=zapatilla)
         stock_formset = StockFormSet(request.POST, instance=zapatilla)
 
         if zapatilla_form.is_valid() and stock_formset.is_valid():
@@ -103,7 +102,7 @@ def editar(request, id):
         zapatilla_form = ZapatillaForm(instance=zapatilla)
         stock_formset = StockFormSet(instance=zapatilla)
 
-    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_formset': stock_formset})
+    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_formset': stock_formset, 'zapatilla': zapatilla})
 
 
 @admin_required
@@ -411,7 +410,7 @@ def registro(request):
             usuario = usuario_form.save()
             direccion = direccion_form.save()
             usuario.direcciones.add(direccion)
-            return redirect('index')
+            return redirect('login')
     else:
         usuario_form = UsuarioForm()
         direccion_form = DireccionForm()
