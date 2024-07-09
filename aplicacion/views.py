@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import (Zapatilla, Categoria, Marca, StockZapatilla,
-                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion,  )
+                     Usuario, Pedido, PedidoZapatilla, Carrito, ItemCarrito, Direccion,)
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from .forms import (UsuarioForm, DireccionForm, ZapatillaForm,
@@ -53,12 +53,10 @@ def search_results(request):
 def index(request):
     productos_nuevos = Zapatilla.objects.all().order_by(
         '-id')[:9]  # ultimos 9 productos
-    
-
 
     data = {
         'productos_nuevos': productos_nuevos,
-        
+
     }
     return render(request, 'aplicacion/index.html', data)
 
@@ -85,10 +83,12 @@ def detalleproducto(request, id):
 def editar(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     StockFormSet = inlineformset_factory(
-        Zapatilla, StockZapatilla, form=StockZapatillaForm, extra=1, can_delete=True)
+        Zapatilla, StockZapatilla, form=StockZapatillaForm, extra=0, can_delete=True
+    )
 
     if request.method == 'POST':
-        zapatilla_form = ZapatillaForm(request.POST, request.FILES, instance=zapatilla)
+        zapatilla_form = ZapatillaForm(
+            request.POST, request.FILES, instance=zapatilla)
         stock_formset = StockFormSet(request.POST, instance=zapatilla)
 
         if zapatilla_form.is_valid() and stock_formset.is_valid():
@@ -96,13 +96,17 @@ def editar(request, id):
             stock_formset.save()
             return redirect('detalleproducto', id=id)
         else:
-            print(zapatilla_form.errors)
-            print(stock_formset.errors)
+            print("Zapatilla Form Errors:", zapatilla_form.errors)
+            print("Stock Formset Errors:", stock_formset.errors)
     else:
         zapatilla_form = ZapatillaForm(instance=zapatilla)
         stock_formset = StockFormSet(instance=zapatilla)
 
-    return render(request, 'aplicacion/editar.html', {'zapatilla_form': zapatilla_form, 'stock_formset': stock_formset, 'zapatilla': zapatilla})
+    return render(request, 'aplicacion/editar.html', {
+        'zapatilla_form': zapatilla_form,
+        'stock_formset': stock_formset,
+        'zapatilla': zapatilla
+    })
 
 
 @admin_required
@@ -142,6 +146,7 @@ def adminpedido(request):
 PedidoZapatillaFormSet = modelformset_factory(
     PedidoZapatilla, fields=('zapatilla', 'cantidad'), extra=0)
 
+
 @admin_required
 def listaPedidos(request):
     pedidos = Pedido.objects.order_by('-fecha')
@@ -157,6 +162,7 @@ def listaPedidos(request):
              'paginator': paginator}
 
     return render(request, 'aplicacion/listaPedidos.html', datos)
+
 
 @admin_required
 def crearPedido(request):
@@ -174,6 +180,7 @@ def crearPedido(request):
         formset = PedidoZapatillaFormSet()
     return render(request, 'aplicacion/crearPedido.html', {'form': form, 'formset': formset})
 
+
 @admin_required
 def editarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
@@ -189,6 +196,7 @@ def editarPedido(request, pk):
 
     return render(request, 'aplicacion/editarPedido.html', {'form': form, 'zapatillas_pedido': zapatillas_pedido})
 
+
 @admin_required
 def eliminarPedido(request, pk):
     pedido = get_object_or_404(Pedido, pk=pk)
@@ -197,6 +205,7 @@ def eliminarPedido(request, pk):
         messages.success(request, 'Pedido eliminado con exito')
         return redirect('listaPedidos')
     return render(request, 'aplicacion/eliminarPedido.html', {'pedido': pedido})
+
 
 @admin_required
 def detallePedido(request, pk):
@@ -218,24 +227,30 @@ def anadir(request):
 
             messages.success(request, 'Producto agregado correctamente')
             return redirect('administrador')
+        else:
+            datos = {
+                'zapatilla_form': zapatilla_form,
+                'stock_form': stock_form
+            }
     else:
         zapatilla_form = ZapatillaForm()
         stock_form = StockZapatillaForm()
         datos = {
-        'zapatilla_form': zapatilla_form,
-        'stock_form': stock_form
-    }
+            'zapatilla_form': zapatilla_form,
+            'stock_form': stock_form
+        }
+
     return render(request, 'aplicacion/anadir.html', datos)
+
 
 @admin_required
 def eliminarProducto(request, id):
     zapatilla = get_object_or_404(Zapatilla, id=id)
     if request.method == 'POST':
         zapatilla.delete()
-        messages.success(request,'Zapatilla eliminada correctamente')
+        messages.success(request, 'Zapatilla eliminada correctamente')
         return redirect('administrador')
     return render(request, 'aplicacion/eliminar_producto.html', {'zapatilla': zapatilla})
-
 
 
 def marca(request, id):
@@ -366,6 +381,7 @@ def loginAdmin(request):
 
     return render(request, 'aplicacion/loginAdmin.html', data)
 
+
 @login_required
 def pedidos(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
@@ -471,6 +487,7 @@ def agregarUsuario(request):
 
     return render(request, 'aplicacion/agregarusuario.html', data)
 
+
 @admin_required
 def eliminarUsuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
@@ -483,10 +500,11 @@ def eliminarUsuario(request, rut):
             messages.success(request, 'Usuario eliminado con exito')
             return redirect('totalusuarios')
         except Exception as ex:
-            messages.error(request,'No se puede eliminar')
+            messages.error(request, 'No se puede eliminar')
             return redirect('totalusuarios')
     # Si no es un POST request, renderizar la página de confirmación de eliminación
     return render(request, 'aplicacion/eliminarusuario.html', {'usuario': usuario})
+
 
 @admin_required
 def editarusuarios(request, rut):
@@ -508,6 +526,7 @@ def editarusuarios(request, rut):
     }
     return render(request, 'aplicacion/editarusuarios.html', data)
 
+
 @login_required
 def direccionesusuario(request, rut):
     usuario = get_object_or_404(Usuario, rut=rut)
@@ -517,6 +536,7 @@ def direccionesusuario(request, rut):
         'direcciones': direcciones,
     }
     return render(request, 'aplicacion/direccionesusuario.html', data)
+
 
 @login_required
 def agregardireccion(request, rut):
@@ -537,6 +557,7 @@ def agregardireccion(request, rut):
     }
 
     return render(request, 'aplicacion/agregardireccion.html', data)
+
 
 @login_required
 def editardirecciones(request, id):
@@ -559,6 +580,7 @@ def editardirecciones(request, id):
     }
     return render(request, 'aplicacion/editardirecciones.html', data)
 
+
 @login_required
 def eliminardireccion(request, id):
     direccion = get_object_or_404(Direccion, id=id)
@@ -568,6 +590,7 @@ def eliminardireccion(request, id):
     direccion.delete()
     messages.success(request, 'Direccion eliminada con exito')
     return redirect('direccionesusuario', rut=usuario.rut)
+
 
 @login_required
 def carrito(request):
@@ -592,7 +615,7 @@ def carrito(request):
     datos = {
         'zapatillas_en_carrito': zapatillas_en_carrito,
         'total_carrito': total_carrito,
-        'direcciones' : direcciones,
+        'direcciones': direcciones,
     }
     return render(request, 'aplicacion/carrito.html', datos)
 
@@ -667,19 +690,21 @@ def confirmarCompra(request):
         return redirect('carrito')
 
     usuario = request.user  # Asegúrate de que el usuario esté autenticado
-    direccion = usuario.direcciones.first()  # Usa la primera dirección del usuario o ajusta según tu lógica
+    # Usa la primera dirección del usuario o ajusta según tu lógica
+    direccion = usuario.direcciones.first()
 
     if not direccion:
-        messages.error(request, 'No tienes una dirección asociada a tu cuenta.')
+        messages.error(
+            request, 'No tienes una dirección asociada a tu cuenta.')
         return redirect('carrito')
 
     pedido = Pedido.objects.create(cliente=usuario, direccion=direccion)
-    subtotal=0
+    subtotal = 0
     for item_id, item_info in carrito.items():
         zapatilla = get_object_or_404(Zapatilla, id=item_info['id'])
-        stock = get_object_or_404(StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
+        stock = get_object_or_404(
+            StockZapatilla, zapatilla=zapatilla, talla=float(item_info['talla']))
 
-        
         if stock.cantidad >= item_info['cantidad']:
             stock.cantidad -= item_info['cantidad']
             cantidad = item_info['cantidad']
@@ -693,7 +718,8 @@ def confirmarCompra(request):
             )
             subtotal = subtotal + zapatilla.precio * cantidad
         else:
-            messages.error(request, f"No hay suficiente stock para la zapatilla {zapatilla.modelo} en talla {item_info['talla']}.")
+            messages.error(
+                request, f"No hay suficiente stock para la zapatilla {zapatilla.modelo} en talla {item_info['talla']}.")
             return redirect('carrito')
 
         pedido.total = subtotal
